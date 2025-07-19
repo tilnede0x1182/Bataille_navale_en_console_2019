@@ -1,42 +1,63 @@
-# Bataille Navale en Java (Touché-Coulé)
 
-- Ce projet implémente le jeu de la bataille navale (touché-coulé) en console.
-- Il propose un affrontement entre plusieurs joueurs humains ou intelligences artificielles.
-- Le jeu est basé sur une grille personnalisable et des bateaux placés manuellement ou automatiquement.
-- Chaque joueur dispose de sa propre grille, et attaque les grilles adverses à tour de rôle.
-- L’IA est capable de placer ses bateaux de manière stratégique et de cibler efficacement.
-- Un affichage en console permet de suivre l’évolution des cartes (attaque et défense).
-- Le jeu se termine quand un joueur conserve seul des bateaux non coulés.
-- Les classes sont organisées pour respecter la séparation des responsabilités (grille, affichage, menu, logique de jeu, IA).
-- Le projet inclut aussi des fonctions utilitaires pour le placement, l’attaque et la vérification des coups.
-- Ce projet sert d'exercice structuré en Java orienté objet pour simuler un jeu complet.
+Bataille Navale (jeu) :
+
+## Description du projet
+- Jeu de bataille navale console en Java orienté objet.
+- Menu interactif pour sélectionner le nombre de joueurs et la taille du plateau.
+- Placement des bateaux manuel pour l’humain ou automatique aléatoire pour l’IA.
+- Tour par tour, chaque joueur attaque une case adverse avec retour « Touché », « Coulé » ou « À l’eau ».
+- Affichage simultané de la carte d’attaque et du plateau propre.
+- IA basique choisissant des coups aléatoires parmi les cases non attaquées.
+- Détection automatique de la destruction complète d’un bateau et fin de partie.
+- Architecture modulaire séparant interface (`Affichage`, `Menu`), logique de jeu (`Jeu`, `Utilitaire`) et IA.
+- Méthodes utilitaires pour validation de format, conversion de coordonnées et gestion de tableaux de cases.
+- Prise en compte des évolutions futures : tests unitaires, stratégie IA améliorée, build automatisé.
+
+## Règles du jeu
+- Chaque joueur dispose d’une grille et place en secret ses bateaux selon leur taille.
+- À chaque tour, un joueur choisit une case à attaquer et l’adversaire annonce « Touché », « Coulé » ou « À l’eau ».
+- La partie se termine lorsqu’un joueur a perdu tous ses bateaux, et l’adversaire est déclaré vainqueur.
 
 ## Technologies utilisées
+- Java SE 11
+- Compilation via `javac` et scripts BAT pour lancement
+- Aucun framework ni gestionnaire de dépendances externe
+- Structure de dossiers classique (`src/` pour sources, `BAT/` pour scripts)
 
-| Technologie | Version  |
-|-------------|----------|
-| Java        | 11+      |
-| JDK         | OpenJDK 11 ou supérieur |
-| Environnement | Compatible console, OS indépendant (testé sous WSL/Windows 11) |
+## Fonctionnalités
+- **Configuration initiale**
+  - Menu principal avec 5 options (nouvelle partie, nombre de joueurs, taille plateau, instructions, quitter)
+  - Saisie et validation de la taille du plateau (hauteur, largeur)
+- **Placement des bateaux**
+  - Manuel : l’utilisateur entre des coordonnées de début et de fin, format `A5` validé (`verifie_format_case`)
+  - Automatique IA : répartition aléatoire avec espacement minimal (distance 1)
+- **Boucle de jeu**
+  - Alternance des tours entre joueurs
+  - Saisie de la case à attaquer (format et répétition contrôlés)
+  - Application de l’attaque, mise à jour de l’état de la case (`attaquee`, `coule`)
+  - Affichage du résultat (`Dans l'eau`, `Touché`, `Coulé`) via `Utilitaire.afficher_evenement_coup`
+- **Affichage console**
+  - Grille de l’attaquant (`afficher_carte_attaque_joueur`)
+  - Grille du défenseur (`afficher_carte_joueur`)
+  - Légendes et alignements dynamiques selon largeur (gestion des espaces et sauts de ligne)
+- **IA**
+  - Placement des bateaux (`place_bateaux_IA`) calculant nombre et taille des bateaux selon dimensions
+  - Choix aléatoire d’attaques dans les cases non encore testées (`verifie_case_tentee`)
+- **Logique de fin de partie**
+  - Vérification de la destruction totale de chaque bateau (`est_coule`)
+  - Recherche du gagnant avec `recherche_gagnant`
+- **Fonctions utilitaires**
+  - Validation de chaînes numériques (`is_integer`)
+  - Génération d’entiers aléatoires bornés (`randInt`, `randInt_trie_valeurs`)
+  - Conversion coordonnées ↔ indices (`convertit_coordonnees_str`)
+  - Affichage divers (`aff`, `affnn`, `aff_tab`, `aff_cases`, `aff_cases_touchee`)
+- **Tests**
+  - Classe de test basique pour tri d’un tableau d’entiers (`Tests/Test.java`)
+  - Infrastructure prête à accueillir JUnit ou similaire
 
-## Fonctionnalités complètes
-
-- Lancement du jeu en ligne de commande (`main()` dans `Jeu.java`)
-- Menu principal : choisir entre humain vs IA ou IA vs IA
-- Grille personnalisable (taille configurable)
-- Placement des bateaux :
-  - Manuel (en saisissant les coordonnées)
-  - Automatique (aléatoire ou via IA)
-- Attaque de cases avec retour sur l'état : dans l’eau, touché, coulé
-- Affichage console :
-  - Grille d’attaque d’un joueur
-  - Grille de défense d’un joueur (optionnel)
-- Système d’IA pour :
-  - Placement stratégique
-  - Sélection des cases à attaquer
-- Gestion des états de jeu :
-  - Bateaux touchés ou coulés
-  - Joueurs éliminés
-  - Fin de partie automatique
-- Visualisation des grilles en fin de partie
-- Code structuré en classes (Jeu, Joueur, IA, Affichage, Bateau, Case, etc.)
+## Stratégies de jeu
+- Adopter un tir en damier pour maximiser la couverture de la grille et localiser les bateaux plus rapidement
+- Cibler systématiquement les cases adjacentes après avoir touché un navire pour en assurer le coulage
+- Varier la dynamique de placement en éloignant certains bateaux pour désorienter l’adversaire
+- Utiliser une distribution équilibrée entre zones centrales et périphériques pour éviter les clusters visibles
+- Observer les zones déjà ratées pour affiner progressivement une zone de chasse optimale
