@@ -1,5 +1,4 @@
-
-Bataille Navale (jeu) :
+# Bataille Navale (jeu) :
 
 ## Description du projet
 - Jeu de bataille navale console en Java orienté objet.
