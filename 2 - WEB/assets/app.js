@@ -45,6 +45,11 @@ let modeTriche = false;
 // Fonctions utilitaires - Logs
 // ==============================================================================
 
+/**
+	Affiche un message de log avec prefixe [APP].
+
+	@param {string} message Message a afficher
+*/
 function log(message) {
 	console.log("[APP] " + message);
 }
@@ -53,6 +58,12 @@ function log(message) {
 // Fonctions utilitaires - DOM
 // ==============================================================================
 
+/**
+	Recupere un element du DOM par son identifiant.
+
+	@param {string} identifiant Identifiant de l element
+	@return {HTMLElement|null} Element trouve ou null
+*/
 function obtenirElement(identifiant) {
 	const element = document.getElementById(identifiant);
 	if (!element) {
@@ -61,12 +72,24 @@ function obtenirElement(identifiant) {
 	return element;
 }
 
+/**
+	Cree un element HTML avec une classe CSS.
+
+	@param {string} balise Nom de la balise HTML
+	@param {string} classeCSS Classe CSS a appliquer
+	@return {HTMLElement} Element cree
+*/
 function creerElement(balise, classeCSS) {
 	const element = document.createElement(balise);
 	element.className = classeCSS;
 	return element;
 }
 
+/**
+	Affiche un message de statut a l utilisateur.
+
+	@param {string} texte Texte du message
+*/
 function afficherMessage(texte) {
 	log("Message: " + texte);
 	const elementMessage = obtenirElement("message-statut");
@@ -79,6 +102,11 @@ function afficherMessage(texte) {
 // Fonctions utilitaires - Grille
 // ==============================================================================
 
+/**
+	Cree une grille vide avec toutes les cases a ETAT_VIDE.
+
+	@return {Array} Grille 2D initialisee
+*/
 function initialiserGrilleVide() {
 	log("Init grille " + tailleGrille + "x" + tailleGrille);
 	const grille = [];
@@ -91,6 +119,13 @@ function initialiserGrilleVide() {
 	return grille;
 }
 
+/**
+	Verifie si des coordonnees sont dans les limites de la grille.
+
+	@param {number} ligne Numero de ligne
+	@param {number} colonne Numero de colonne
+	@return {boolean} True si coordonnees valides
+*/
 function coordonneesValides(ligne, colonne) {
 	const ligneOk = ligne >= 0 && ligne < tailleGrille;
 	const colonneOk = colonne >= 0 && colonne < tailleGrille;
@@ -101,6 +136,9 @@ function coordonneesValides(ligne, colonne) {
 // Fonctions principales - Rendu grille
 // ==============================================================================
 
+/**
+	Calcule la taille optimale des cases selon la largeur de l ecran.
+*/
 function calculerTailleCase() {
 	const largeurEcran = window.innerWidth;
 	const margeSecurite = 40;
@@ -117,6 +155,13 @@ function calculerTailleCase() {
 	log("Ecran: " + largeurEcran + "px, taille case: " + tailleCase + "px");
 }
 
+/**
+	Affiche une grille dans le DOM.
+
+	@param {string} conteneurId Identifiant du conteneur
+	@param {Array} grille Grille a afficher
+	@param {boolean} cliquable True si les cases sont cliquables
+*/
 function rendreGrille(conteneurId, grille, cliquable) {
 	log("Rendu grille: " + conteneurId);
 	const conteneur = obtenirElement(conteneurId);
@@ -132,6 +177,16 @@ function rendreGrille(conteneurId, grille, cliquable) {
 	}
 }
 
+/**
+	Cree un element DOM representant une case de la grille.
+
+	@param {number} ligne Numero de ligne
+	@param {number} colonne Numero de colonne
+	@param {number|string} etat Etat de la case
+	@param {boolean} cliquable True si la case est cliquable
+	@param {string} conteneurId Identifiant du conteneur parent
+	@return {HTMLElement} Element case cree
+*/
 function creerCaseElement(ligne, colonne, etat, cliquable, conteneurId) {
 	const caseElement = creerElement("div", "case");
 	caseElement.dataset.ligne = ligne;
@@ -149,6 +204,13 @@ function creerCaseElement(ligne, colonne, etat, cliquable, conteneurId) {
 	return caseElement;
 }
 
+/**
+	Applique la classe CSS correspondant a l etat de la case.
+
+	@param {HTMLElement} element Element DOM de la case
+	@param {number|string} etat Etat de la case
+	@param {string} conteneurId Identifiant du conteneur parent
+*/
 function appliquerClasseEtat(element, etat, conteneurId) {
 	if (etat === ETAT_EAU) {
 		element.classList.add("case--eau");
@@ -168,6 +230,12 @@ function appliquerClasseEtat(element, etat, conteneurId) {
 // Fonctions principales - Placement bateaux
 // ==============================================================================
 
+/**
+	Place tous les bateaux aleatoirement sur une grille.
+
+	@param {Array} grille Grille ou placer les bateaux
+	@return {Array} Liste des bateaux places
+*/
 function placerBateauxAleatoire(grille) {
 	const taillesBateaux = calculerBateauxSelonGrille();
 	log("Placement aleatoire: " + JSON.stringify(taillesBateaux));
@@ -179,6 +247,13 @@ function placerBateauxAleatoire(grille) {
 	return bateaux;
 }
 
+/**
+	Place un bateau de taille donnee sur la grille.
+
+	@param {Array} grille Grille ou placer le bateau
+	@param {number} taille Taille du bateau
+	@return {Object} Bateau place avec ses cases
+*/
 function placerUnBateau(grille, taille) {
 	let placementOk = false;
 	let cases = [];
@@ -190,6 +265,12 @@ function placerUnBateau(grille, taille) {
 	return { cases: cases, coule: false };
 }
 
+/**
+	Genere une position aleatoire pour un bateau.
+
+	@param {number} taille Taille du bateau
+	@return {Array} Liste des cases du bateau
+*/
 function genererPositionBateau(taille) {
 	const horizontal = Math.random() < 0.5;
 	const ligneMax = horizontal ? tailleGrille : tailleGrille - taille;
@@ -199,6 +280,15 @@ function genererPositionBateau(taille) {
 	return construireCasesBateau(ligneDepart, colonneDepart, taille, horizontal);
 }
 
+/**
+	Construit la liste des cases occupees par un bateau.
+
+	@param {number} ligne Ligne de depart
+	@param {number} colonne Colonne de depart
+	@param {number} taille Taille du bateau
+	@param {boolean} horizontal True si orientation horizontale
+	@return {Array} Liste des cases du bateau
+*/
 function construireCasesBateau(ligne, colonne, taille, horizontal) {
 	const cases = [];
 	for (let index = 0; index < taille; index++) {
@@ -209,6 +299,13 @@ function construireCasesBateau(ligne, colonne, taille, horizontal) {
 	return cases;
 }
 
+/**
+	Verifie si un placement de bateau est valide.
+
+	@param {Array} grille Grille a verifier
+	@param {Array} cases Cases a occuper
+	@return {boolean} True si placement valide
+*/
 function verifierPlacementValide(grille, cases) {
 	for (let index = 0; index < cases.length; index++) {
 		const coord = cases[index];
@@ -222,6 +319,12 @@ function verifierPlacementValide(grille, cases) {
 	return true;
 }
 
+/**
+	Marque les cases d un bateau sur la grille.
+
+	@param {Array} grille Grille a modifier
+	@param {Array} cases Cases a marquer
+*/
 function marquerCasesBateau(grille, cases) {
 	for (let index = 0; index < cases.length; index++) {
 		const coord = cases[index];
@@ -233,6 +336,9 @@ function marquerCasesBateau(grille, cases) {
 // Fonctions principales - Placement manuel
 // ==============================================================================
 
+/**
+	Initialise la liste des bateaux a placer manuellement.
+*/
 function initialiserBateauxAplacer() {
 	log("Init bateaux a placer - taille grille: " + tailleGrille);
 	bateauxAplacer = calculerBateauxSelonGrille();
@@ -241,6 +347,11 @@ function initialiserBateauxAplacer() {
 	orientationHorizontale = true;
 }
 
+/**
+	Calcule le nombre et tailles des bateaux selon la taille de grille.
+
+	@return {Array} Liste des tailles de bateaux
+*/
 function calculerBateauxSelonGrille() {
 	const surface = tailleGrille * tailleGrille;
 	const casesOccupees = Math.round(surface * 0.17);
@@ -253,6 +364,15 @@ function calculerBateauxSelonGrille() {
 	return bateaux;
 }
 
+/**
+	Genere les tailles de bateaux a placer.
+
+	@param {number} nombreBateaux Nombre de bateaux souhaite
+	@param {number} tailleMax Taille maximale d un bateau
+	@param {number} tailleMin Taille minimale d un bateau
+	@param {number} casesOccupees Nombre total de cases a occuper
+	@return {Array} Liste des tailles de bateaux
+*/
 function genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees) {
 	const bateaux = [];
 	let casesRestantes = casesOccupees;
@@ -274,6 +394,9 @@ function genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupee
 	return bateaux;
 }
 
+/**
+	Demarre la phase de placement des bateaux.
+*/
 function demarrerPhasePlacement() {
 	log("Phase placement - auto: " + placementAutomatique);
 	phasePlacement = true;
@@ -293,6 +416,9 @@ function demarrerPhasePlacement() {
 	}
 }
 
+/**
+	Affiche le panneau listant les bateaux restants a placer.
+*/
 function afficherPanneauBateauxRestants() {
 	const panneau = obtenirElement("panneau-bateaux-restants");
 	if (!panneau) return;
@@ -308,6 +434,12 @@ function afficherPanneauBateauxRestants() {
 	panneau.appendChild(contenu);
 }
 
+/**
+	Compte les bateaux par taille.
+
+	@param {Array} bateaux Liste des tailles de bateaux
+	@return {Object} Compteur par taille
+*/
 function compterBateauxParTaille(bateaux) {
 	const compteur = {};
 	for (var idx = 0; idx < bateaux.length; idx++) {
@@ -321,6 +453,13 @@ function compterBateauxParTaille(bateaux) {
 	return compteur;
 }
 
+/**
+	Construit le contenu HTML du panneau de bateaux restants.
+
+	@param {number} nombreTotal Nombre total de bateaux restants
+	@param {Object} compteurParTaille Compteur de bateaux par taille
+	@return {DocumentFragment} Fragment DOM du contenu
+*/
 function construireContenuPanneau(nombreTotal, compteurParTaille) {
 	const conteneur = document.createDocumentFragment();
 	const titre = creerElement("h3", "");
@@ -339,6 +478,9 @@ function construireContenuPanneau(nombreTotal, compteurParTaille) {
 	return conteneur;
 }
 
+/**
+	Place un bateau unique pour une grille 1x1.
+*/
 function placerBateauCasUnique() {
 	log("Cas unique 1x1 - placement automatique");
 	grilleJoueur[0][0] = "B";
@@ -347,6 +489,12 @@ function placerBateauCasUnique() {
 	finirPhasePlacement();
 }
 
+/**
+	Gere le clic sur une case pendant la phase de placement.
+
+	@param {number} ligne Ligne cliquee
+	@param {number} colonne Colonne cliquee
+*/
 function gererClicPlacement(ligne, colonne) {
 	log("Clic placement [" + ligne + "," + colonne + "]");
 	const tailleBateau = bateauxAplacer[indexBateauActuel];
@@ -358,6 +506,14 @@ function gererClicPlacement(ligne, colonne) {
 	placerBateauManuel(cases);
 }
 
+/**
+	Construit les cases de previsualisation du bateau.
+
+	@param {number} ligneDepart Ligne de depart
+	@param {number} colonneDepart Colonne de depart
+	@param {number} taille Taille du bateau
+	@return {Array|null} Cases du bateau ou null si invalide
+*/
 function construireCasesPreview(ligneDepart, colonneDepart, taille) {
 	const cases = [];
 	for (let idx = 0; idx < taille; idx++) {
@@ -370,6 +526,11 @@ function construireCasesPreview(ligneDepart, colonneDepart, taille) {
 	return cases;
 }
 
+/**
+	Gere le survol d une case pendant le placement.
+
+	@param {Event} evenement Evenement mouseenter
+*/
 function gererSurvolCase(evenement) {
 	if (!phasePlacement || placementAutomatique) return;
 	const caseElement = evenement.target;
@@ -380,6 +541,12 @@ function gererSurvolCase(evenement) {
 	afficherPreview(ligne, colonne);
 }
 
+/**
+	Affiche la previsualisation du bateau a placer.
+
+	@param {number} ligne Ligne de depart
+	@param {number} colonne Colonne de depart
+*/
 function afficherPreview(ligne, colonne) {
 	effacerPreview();
 	const tailleBateau = bateauxAplacer[indexBateauActuel];
@@ -397,6 +564,9 @@ function afficherPreview(ligne, colonne) {
 	}
 }
 
+/**
+	Efface la previsualisation du bateau.
+*/
 function effacerPreview() {
 	const conteneur = obtenirElement("grille-joueur");
 	const casesPreview = conteneur.querySelectorAll(".case--preview, .case--preview-invalide");
@@ -405,6 +575,9 @@ function effacerPreview() {
 	});
 }
 
+/**
+	Change l orientation du bateau a placer.
+*/
 function pivoterBateau() {
 	orientationHorizontale = !orientationHorizontale;
 	log("Orientation: " + (orientationHorizontale ? "horizontale" : "verticale"));
@@ -414,6 +587,11 @@ function pivoterBateau() {
 	}
 }
 
+/**
+	Place un bateau manuellement sur la grille du joueur.
+
+	@param {Array} cases Cases du bateau a placer
+*/
 function placerBateauManuel(cases) {
 	log("Bateau place: " + JSON.stringify(cases));
 	marquerCasesBateau(grilleJoueur, cases);
@@ -429,6 +607,9 @@ function placerBateauManuel(cases) {
 	}
 }
 
+/**
+	Cache le panneau des bateaux restants.
+*/
 function cacherPanneauBateauxRestants() {
 	const panneau = obtenirElement("panneau-bateaux-restants");
 	if (panneau) {
@@ -436,6 +617,9 @@ function cacherPanneauBateauxRestants() {
 	}
 }
 
+/**
+	Termine la phase de placement et demarre la partie.
+*/
 function finirPhasePlacement() {
 	log("Fin placement - Debut partie");
 	phasePlacement = false;
@@ -456,6 +640,9 @@ function finirPhasePlacement() {
 // Fonctions principales - IA procedurale
 // ==============================================================================
 
+/**
+	Reinitialise l etat de l IA.
+*/
 function resetIA() {
 	log("Reset IA");
 	iaMode = MODE_RECHERCHE;
@@ -465,6 +652,11 @@ function resetIA() {
 	iaCasesTouchees = [];
 }
 
+/**
+	Choisit la prochaine case a tirer pour l IA.
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaChoisirCase() {
 	log("IA choisit case - mode: " + (iaMode === MODE_RECHERCHE ? "RECHERCHE" : "PONCAGE"));
 	if (iaMode === MODE_RECHERCHE) {
@@ -474,12 +666,22 @@ function iaChoisirCase() {
 	}
 }
 
+/**
+	Choisit une case en mode recherche (diagonale puis sequentiel).
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaChoisirCaseRecherche() {
 	const caseDiagonale = iaTrouverCaseDiagonale();
 	if (caseDiagonale !== null) return caseDiagonale;
 	return iaTrouverPremiereCaseLibre();
 }
 
+/**
+	Trouve une case libre sur les diagonales.
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaTrouverCaseDiagonale() {
 	for (let ligne = 0; ligne < tailleGrille; ligne++) {
 		for (let colonne = 0; colonne < tailleGrille; colonne++) {
@@ -491,6 +693,11 @@ function iaTrouverCaseDiagonale() {
 	return null;
 }
 
+/**
+	Trouve la premiere case libre de la grille.
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaTrouverPremiereCaseLibre() {
 	for (let ligne = 0; ligne < tailleGrille; ligne++) {
 		for (let colonne = 0; colonne < tailleGrille; colonne++) {
@@ -502,6 +709,13 @@ function iaTrouverPremiereCaseLibre() {
 	return null;
 }
 
+/**
+	Verifie si une case est libre pour l IA.
+
+	@param {number} ligne Ligne a verifier
+	@param {number} colonne Colonne a verifier
+	@return {boolean} True si case libre
+*/
 function iaCaseLibre(ligne, colonne) {
 	const etat = grilleJoueur[ligne][colonne];
 	return etat === ETAT_VIDE || etat === "B";
@@ -511,6 +725,11 @@ function iaCaseLibre(ligne, colonne) {
 // IA procedurale - Mode poncage
 // ------------------------------------------------------------------------------
 
+/**
+	Choisit une case en mode poncage (recherche autour d un touche).
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaChoisirCasePoncage() {
 	if (iaDirectionActuelle === 0) {
 		return iaChoisirDirectionInitiale();
@@ -519,6 +738,11 @@ function iaChoisirCasePoncage() {
 	}
 }
 
+/**
+	Choisit la premiere direction a explorer apres un touche.
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaChoisirDirectionInitiale() {
 	const directions = [4, 2, 3, 1];
 	for (let idx = 0; idx < directions.length; idx++) {
@@ -536,6 +760,11 @@ function iaChoisirDirectionInitiale() {
 	return iaChoisirCaseRecherche();
 }
 
+/**
+	Continue a tirer dans la direction actuelle.
+
+	@return {Object|null} Coordonnees de la case ou null
+*/
 function iaContinuerDansDirection() {
 	const derniereTouchee = iaCasesTouchees.length > 0 ? iaCasesTouchees[iaCasesTouchees.length - 1] : iaCaseToucheeInitiale;
 	const caseSuivante = iaCalculerCaseAdjacente(derniereTouchee, iaDirectionActuelle);
@@ -554,6 +783,13 @@ function iaContinuerDansDirection() {
 	return iaChoisirDirectionInitiale();
 }
 
+/**
+	Calcule la case adjacente dans une direction donnee.
+
+	@param {Object} caseOrigine Case de depart
+	@param {number} direction Direction (1=haut, 2=bas, 3=gauche, 4=droite)
+	@return {Object} Coordonnees de la case adjacente
+*/
 function iaCalculerCaseAdjacente(caseOrigine, direction) {
 	let nouvLigne = caseOrigine.ligne;
 	let nouvColonne = caseOrigine.colonne;
@@ -564,11 +800,23 @@ function iaCalculerCaseAdjacente(caseOrigine, direction) {
 	return { ligne: nouvLigne, colonne: nouvColonne };
 }
 
+/**
+	Verifie si une case est valide et libre.
+
+	@param {Object} caseTest Case a verifier
+	@return {boolean} True si case valide et libre
+*/
 function iaCaseValideEtLibre(caseTest) {
 	if (!coordonneesValides(caseTest.ligne, caseTest.colonne)) return false;
 	return iaCaseLibre(caseTest.ligne, caseTest.colonne);
 }
 
+/**
+	Retourne la direction opposee.
+
+	@param {number} direction Direction actuelle
+	@return {number} Direction opposee
+*/
 function iaInverserDirection(direction) {
 	if (direction === 1) return 2;
 	if (direction === 2) return 1;
@@ -581,6 +829,12 @@ function iaInverserDirection(direction) {
 // IA procedurale - Mise a jour et tir
 // ------------------------------------------------------------------------------
 
+/**
+	Met a jour l etat de l IA apres un tir.
+
+	@param {number} resultat Resultat du tir
+	@param {Object} caseTiree Case tiree
+*/
 function iaMettreAJourEtat(resultat, caseTiree) {
 	log("IA MAJ etat - resultat: " + resultat);
 	if (resultat === ETAT_COULE) {
@@ -597,6 +851,11 @@ function iaMettreAJourEtat(resultat, caseTiree) {
 	}
 }
 
+/**
+	Gere un tir touche pour l IA.
+
+	@param {Object} caseTiree Case touchee
+*/
 function iaGererTouche(caseTiree) {
 	if (iaMode === MODE_RECHERCHE) {
 		iaMode = MODE_PONCAGE;
@@ -608,6 +867,9 @@ function iaGererTouche(caseTiree) {
 	iaCasesTouchees.push(caseTiree);
 }
 
+/**
+	Execute le tour de l IA.
+*/
 function tourIA() {
 	log("=== TOUR IA ===");
 	const caseIA = iaChoisirCase();
@@ -618,6 +880,12 @@ function tourIA() {
 	effectuerTirIA(caseIA.ligne, caseIA.colonne);
 }
 
+/**
+	Effectue un tir de l IA sur la grille du joueur.
+
+	@param {number} ligne Ligne visee
+	@param {number} colonne Colonne visee
+*/
 function effectuerTirIA(ligne, colonne) {
 	log("IA tire [" + ligne + "," + colonne + "]");
 	const caseActuelle = grilleJoueur[ligne][colonne];
@@ -640,6 +908,11 @@ function effectuerTirIA(ligne, colonne) {
 	verifierFinPartie();
 }
 
+/**
+	Affiche le message correspondant au resultat du tir IA.
+
+	@param {number} resultat Resultat du tir
+*/
 function afficherMessageIA(resultat) {
 	if (resultat === ETAT_EAU) {
 		afficherMessage("IA: Rate");
@@ -654,6 +927,13 @@ function afficherMessageIA(resultat) {
 // Verification bateau coule
 // ------------------------------------------------------------------------------
 
+/**
+	Verifie si un bateau du joueur est coule.
+
+	@param {number} ligne Ligne du tir
+	@param {number} colonne Colonne du tir
+	@return {boolean} True si un bateau est coule
+*/
 function verifierBateauCouleJoueur(ligne, colonne) {
 	for (let idx = 0; idx < bateauxJoueur.length; idx++) {
 		const bateau = bateauxJoueur[idx];
@@ -669,6 +949,13 @@ function verifierBateauCouleJoueur(ligne, colonne) {
 	return false;
 }
 
+/**
+	Verifie si un bateau adverse est coule.
+
+	@param {number} ligne Ligne du tir
+	@param {number} colonne Colonne du tir
+	@return {boolean} True si un bateau est coule
+*/
 function verifierBateauCouleAdversaire(ligne, colonne) {
 	for (let idx = 0; idx < bateauxAdversaire.length; idx++) {
 		const bateau = bateauxAdversaire[idx];
@@ -684,6 +971,14 @@ function verifierBateauCouleAdversaire(ligne, colonne) {
 	return false;
 }
 
+/**
+	Verifie si un bateau contient une case donnee.
+
+	@param {Object} bateau Bateau a verifier
+	@param {number} ligne Ligne de la case
+	@param {number} colonne Colonne de la case
+	@return {boolean} True si le bateau contient la case
+*/
 function bateauContientCase(bateau, ligne, colonne) {
 	for (let cIdx = 0; cIdx < bateau.cases.length; cIdx++) {
 		if (bateau.cases[cIdx].ligne === ligne && bateau.cases[cIdx].colonne === colonne) {
@@ -693,6 +988,13 @@ function bateauContientCase(bateau, ligne, colonne) {
 	return false;
 }
 
+/**
+	Verifie si toutes les cases d un bateau sont touchees.
+
+	@param {Object} bateau Bateau a verifier
+	@param {Array} grille Grille contenant le bateau
+	@return {boolean} True si tout est touche
+*/
 function verifierToutTouche(bateau, grille) {
 	for (let cIdx = 0; cIdx < bateau.cases.length; cIdx++) {
 		const coord = bateau.cases[cIdx];
@@ -704,6 +1006,14 @@ function verifierToutTouche(bateau, grille) {
 	return true;
 }
 
+/**
+	Marque un bateau comme coule sur la grille.
+
+	@param {Array} bateaux Liste des bateaux
+	@param {Array} grille Grille a modifier
+	@param {number} ligne Ligne du tir final
+	@param {number} colonne Colonne du tir final
+*/
 function marquerBateauCoule(bateaux, grille, ligne, colonne) {
 	for (let idx = 0; idx < bateaux.length; idx++) {
 		const bateau = bateaux[idx];
@@ -722,6 +1032,9 @@ function marquerBateauCoule(bateaux, grille, ligne, colonne) {
 // Fin de partie
 // ------------------------------------------------------------------------------
 
+/**
+	Verifie si la partie est terminee.
+*/
 function verifierFinPartie() {
 	const joueurPerdu = tousCoules(bateauxJoueur);
 	const adversairePerdu = tousCoules(bateauxAdversaire);
@@ -735,6 +1048,11 @@ function verifierFinPartie() {
 	}
 }
 
+/**
+	Affiche la modale de fin de partie.
+
+	@param {boolean} victoire True si le joueur a gagne
+*/
 function afficherModaleFinPartie(victoire) {
 	log("Affichage modale fin de partie - victoire: " + victoire);
 	supprimerModalesExistantes();
@@ -755,15 +1073,24 @@ function afficherModaleFinPartie(victoire) {
 	document.body.appendChild(overlay);
 }
 
+/**
+	Ferme la modale et relance une nouvelle partie.
+*/
 function fermerModaleEtRelancer() {
 	supprimerModalesExistantes();
 	demarrerNouvellePartie();
 }
 
+/**
+	Ferme la modale sans relancer de partie.
+*/
 function fermerModaleSansRelancer() {
 	supprimerModalesExistantes();
 }
 
+/**
+	Supprime toutes les modales existantes du DOM.
+*/
 function supprimerModalesExistantes() {
 	const modales = document.querySelectorAll(".modale-overlay");
 	modales.forEach(function(modale) {
@@ -771,6 +1098,12 @@ function supprimerModalesExistantes() {
 	});
 }
 
+/**
+	Verifie si tous les bateaux sont coules.
+
+	@param {Array} bateaux Liste des bateaux
+	@return {boolean} True si tous coules
+*/
 function tousCoules(bateaux) {
 	for (let idx = 0; idx < bateaux.length; idx++) {
 		if (!bateaux[idx].coule) return false;
@@ -782,6 +1115,11 @@ function tousCoules(bateaux) {
 // Fonctions principales - Logique de jeu
 // ==============================================================================
 
+/**
+	Gere le clic sur une case de grille.
+
+	@param {Event} evenement Evenement click
+*/
 function gererClicCase(evenement) {
 	log("Clic case");
 	const caseElement = evenement.target;
@@ -798,6 +1136,12 @@ function gererClicCase(evenement) {
 	effectuerTir(ligne, colonne);
 }
 
+/**
+	Effectue un tir du joueur sur la grille adverse.
+
+	@param {number} ligne Ligne visee
+	@param {number} colonne Colonne visee
+*/
 function effectuerTir(ligne, colonne) {
 	log("Tir [" + ligne + "," + colonne + "]");
 	const caseActuelle = grilleAdversaire[ligne][colonne];
@@ -814,6 +1158,13 @@ function effectuerTir(ligne, colonne) {
 	}
 }
 
+/**
+	Calcule le resultat d un tir sur la grille adverse.
+
+	@param {number} ligne Ligne du tir
+	@param {number} colonne Colonne du tir
+	@return {number} Resultat du tir (ETAT_EAU, ETAT_TOUCHE, ETAT_COULE)
+*/
 function calculerResultatTir(ligne, colonne) {
 	if (grilleAdversaire[ligne][colonne] === "B") {
 		grilleAdversaire[ligne][colonne] = ETAT_TOUCHE;
@@ -827,6 +1178,11 @@ function calculerResultatTir(ligne, colonne) {
 	return ETAT_EAU;
 }
 
+/**
+	Affiche le message correspondant au resultat du tir.
+
+	@param {number} resultat Resultat du tir
+*/
 function afficherResultatTir(resultat) {
 	if (resultat === ETAT_EAU) {
 		afficherMessage("Dans l eau !");
@@ -841,6 +1197,9 @@ function afficherResultatTir(resultat) {
 // Fonctions principales - Initialisation
 // ==============================================================================
 
+/**
+	Demarre une nouvelle partie.
+*/
 function demarrerNouvellePartie() {
 	log("=== NOUVELLE PARTIE ===");
 	mettreAJourPlacementAutomatique();
@@ -855,12 +1214,18 @@ function demarrerNouvellePartie() {
 	demarrerPhasePlacement();
 }
 
+/**
+	Met a jour le mode de placement selon le switch.
+*/
 function mettreAJourPlacementAutomatique() {
 	const switchPlacement = obtenirElement("switch-placement-auto");
 	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
 	log("Placement auto mis a jour: " + placementAutomatique);
 }
 
+/**
+	Initialise tous les ecouteurs d evenements.
+*/
 function initialiserEcouteurs() {
 	log("Init ecouteurs");
 	const boutonCommencer = obtenirElement("bouton-commencer");
@@ -887,6 +1252,11 @@ function initialiserEcouteurs() {
 	log("Ecouteur clavier OK");
 }
 
+/**
+	Gere les touches clavier.
+
+	@param {KeyboardEvent} evenement Evenement clavier
+*/
 function gererToucheClavier(evenement) {
 	if (evenement.key === "r" || evenement.key === "R") {
 		if (phasePlacement && !placementAutomatique) {
@@ -907,15 +1277,28 @@ function gererToucheClavier(evenement) {
 	}
 }
 
+/**
+	Verifie si une modale est ouverte.
+
+	@return {boolean} True si modale ouverte
+*/
 function modaleOuverte() {
 	return document.querySelector(".modale-overlay") !== null;
 }
 
+/**
+	Verifie si le menu de configuration est visible.
+
+	@return {boolean} True si menu visible
+*/
 function menuVisible() {
 	const menuConfig = obtenirElement("menu-config");
 	return menuConfig && menuConfig.style.display !== "none";
 }
 
+/**
+	Lance une partie depuis le menu de configuration.
+*/
 function lancerPartieDepuisMenu() {
 	log("=== LANCEMENT PARTIE ===");
 	const inputTaille = obtenirElement("input-taille");
@@ -931,6 +1314,9 @@ function lancerPartieDepuisMenu() {
 	demarrerNouvellePartie();
 }
 
+/**
+	Affiche la zone de jeu et cache le menu.
+*/
 function afficherZoneJeu() {
 	log("Affichage zone jeu");
 	const menuConfig = obtenirElement("menu-config");
@@ -941,6 +1327,9 @@ function afficherZoneJeu() {
 	if (zoneControles) zoneControles.style.display = "flex";
 }
 
+/**
+	Retourne au menu de configuration.
+*/
 function retourMenu() {
 	log("Retour menu");
 	const menuConfig = obtenirElement("menu-config");
@@ -953,6 +1342,9 @@ function retourMenu() {
 	focusInputTaille();
 }
 
+/**
+	Charge la configuration depuis le serveur.
+*/
 function chargerConfig() {
 	log("Chargement config serveur");
 	fetch("/api/config")
@@ -966,6 +1358,9 @@ function chargerConfig() {
 		});
 }
 
+/**
+	Initialise l application au chargement.
+*/
 function initialiserApplication() {
 	log("=== INIT APP ===");
 	chargerConfig();
@@ -974,6 +1369,9 @@ function initialiserApplication() {
 	focusInputTaille();
 }
 
+/**
+	Sauvegarde les preferences dans le localStorage.
+*/
 function sauvegarderPreferences() {
 	const switchPlacement = obtenirElement("switch-placement-auto");
 	const inputTaille = obtenirElement("input-taille");
@@ -985,6 +1383,9 @@ function sauvegarderPreferences() {
 	log("Preferences sauvegardees - placement auto: " + preferences.placementAutomatique + ", taille: " + preferences.tailleGrille);
 }
 
+/**
+	Charge les preferences depuis le localStorage.
+*/
 function chargerPreferences() {
 	const donnees = localStorage.getItem("bataille_navale");
 	if (donnees) {
@@ -1001,6 +1402,9 @@ function chargerPreferences() {
 	}
 }
 
+/**
+	Met le focus sur l input de taille de grille.
+*/
 function focusInputTaille() {
 	const inputTaille = obtenirElement("input-taille");
 	if (inputTaille) {
@@ -1013,6 +1417,9 @@ function focusInputTaille() {
 // Main
 // ==============================================================================
 
+/**
+	Point d entree de l application.
+*/
 function main() {
 	initialiserApplication();
 }

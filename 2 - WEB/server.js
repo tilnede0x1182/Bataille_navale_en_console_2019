@@ -109,7 +109,7 @@ function envoyerFichier(reponse, cheminFichier, urlRequete) {
 	@return Chemin absolu du fichier
 */
 function resoudreCheminFichier(urlRequete) {
-	var cheminRelatif = urlRequete === "/" ? "/index.html" : urlRequete;
+	const cheminRelatif = urlRequete === "/" ? "/index.html" : urlRequete;
 	return path.join(__dirname, "assets", cheminRelatif);
 }
 
