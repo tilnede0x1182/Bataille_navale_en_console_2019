@@ -102,15 +102,15 @@ function coordonneesValides(ligne, colonne) {
 // ==============================================================================
 
 function calculerTailleCase() {
-	var largeurEcran = window.innerWidth;
-	var margeSecurite = 40;
-	var gapZoneJeu = 32;
-	var paddingSection = 48;
-	var paddingGrille = 16;
-	var gapCases = 4;
-	var espaceFixeParGrille = paddingSection + paddingGrille + (gapCases * (tailleGrille - 1));
-	var largeurDisponible = largeurEcran - margeSecurite - gapZoneJeu - (espaceFixeParGrille * 2);
-	var largeurParGrille = largeurDisponible / 2;
+	const largeurEcran = window.innerWidth;
+	const margeSecurite = 40;
+	const gapZoneJeu = 32;
+	const paddingSection = 48;
+	const paddingGrille = 16;
+	const gapCases = 4;
+	const espaceFixeParGrille = paddingSection + paddingGrille + (gapCases * (tailleGrille - 1));
+	const largeurDisponible = largeurEcran - margeSecurite - gapZoneJeu - (espaceFixeParGrille * 2);
+	const largeurParGrille = largeurDisponible / 2;
 	tailleCase = Math.floor(largeurParGrille / tailleGrille);
 	if (tailleCase > 60) tailleCase = 60;
 	if (tailleCase < 10) tailleCase = 10;
@@ -242,23 +242,23 @@ function initialiserBateauxAplacer() {
 }
 
 function calculerBateauxSelonGrille() {
-	var surface = tailleGrille * tailleGrille;
-	var casesOccupees = Math.round(surface * 0.17);
-	var tailleMax = Math.max(2, Math.floor(tailleGrille / 2));
-	var tailleMin = 2;
-	var tailleMoyenne = (tailleMax + tailleMin) / 2;
-	var nombreBateaux = Math.max(1, Math.round(casesOccupees / tailleMoyenne));
-	var bateaux = genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees);
+	const surface = tailleGrille * tailleGrille;
+	const casesOccupees = Math.round(surface * 0.17);
+	const tailleMax = Math.max(2, Math.floor(tailleGrille / 2));
+	const tailleMin = 2;
+	const tailleMoyenne = (tailleMax + tailleMin) / 2;
+	const nombreBateaux = Math.max(1, Math.round(casesOccupees / tailleMoyenne));
+	const bateaux = genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees);
 	log("Surface: " + surface + ", cases occupees: " + casesOccupees + ", bateaux: " + nombreBateaux);
 	return bateaux;
 }
 
 function genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees) {
-	var bateaux = [];
-	var casesRestantes = casesOccupees;
+	const bateaux = [];
+	let casesRestantes = casesOccupees;
 	for (var idx = 0; idx < nombreBateaux; idx++) {
-		var ratio = 1 - (idx / nombreBateaux);
-		var taille = Math.round(tailleMin + (tailleMax - tailleMin) * ratio);
+		const ratio = 1 - (idx / nombreBateaux);
+		let taille = Math.round(tailleMin + (tailleMax - tailleMin) * ratio);
 		taille = Math.max(tailleMin, Math.min(tailleMax, taille));
 		if (casesRestantes < taille) {
 			taille = Math.max(tailleMin, casesRestantes);
@@ -294,24 +294,24 @@ function demarrerPhasePlacement() {
 }
 
 function afficherPanneauBateauxRestants() {
-	var panneau = obtenirElement("panneau-bateaux-restants");
+	const panneau = obtenirElement("panneau-bateaux-restants");
 	if (!panneau) return;
-	var bateauxRestants = bateauxAplacer.slice(indexBateauActuel);
+	const bateauxRestants = bateauxAplacer.slice(indexBateauActuel);
 	if (bateauxRestants.length === 0) {
 		panneau.style.display = "none";
 		return;
 	}
 	panneau.style.display = "block";
-	var compteurParTaille = compterBateauxParTaille(bateauxRestants);
-	var contenu = construireContenuPanneau(bateauxRestants.length, compteurParTaille);
+	const compteurParTaille = compterBateauxParTaille(bateauxRestants);
+	const contenu = construireContenuPanneau(bateauxRestants.length, compteurParTaille);
 	panneau.replaceChildren();
 	panneau.appendChild(contenu);
 }
 
 function compterBateauxParTaille(bateaux) {
-	var compteur = {};
+	const compteur = {};
 	for (var idx = 0; idx < bateaux.length; idx++) {
-		var taille = bateaux[idx];
+		const taille = bateaux[idx];
 		if (compteur[taille]) {
 			compteur[taille]++;
 		} else {
@@ -322,16 +322,16 @@ function compterBateauxParTaille(bateaux) {
 }
 
 function construireContenuPanneau(nombreTotal, compteurParTaille) {
-	var conteneur = document.createDocumentFragment();
-	var titre = creerElement("h3", "");
+	const conteneur = document.createDocumentFragment();
+	const titre = creerElement("h3", "");
 	titre.textContent = nombreTotal + " bateau" + (nombreTotal > 1 ? "x" : "") + " restant" + (nombreTotal > 1 ? "s" : "");
 	conteneur.appendChild(titre);
-	var liste = creerElement("ul", "");
-	var tailles = Object.keys(compteurParTaille).map(Number).sort(function(a, b) { return b - a; });
+	const liste = creerElement("ul", "");
+	const tailles = Object.keys(compteurParTaille).map(Number).sort(function(a, b) { return b - a });
 	for (var idx = 0; idx < tailles.length; idx++) {
-		var taille = tailles[idx];
-		var nombre = compteurParTaille[taille];
-		var item = creerElement("li", "");
+		const taille = tailles[idx];
+		const nombre = compteurParTaille[taille];
+		const item = creerElement("li", "");
 		item.textContent = nombre + " bateau" + (nombre > 1 ? "x" : "") + " de " + taille + " case" + (taille > 1 ? "s" : "");
 		liste.appendChild(item);
 	}
@@ -430,7 +430,7 @@ function placerBateauManuel(cases) {
 }
 
 function cacherPanneauBateauxRestants() {
-	var panneau = obtenirElement("panneau-bateaux-restants");
+	const panneau = obtenirElement("panneau-bateaux-restants");
 	if (panneau) {
 		panneau.style.display = "none";
 	}
@@ -843,14 +843,22 @@ function afficherResultatTir(resultat) {
 
 function demarrerNouvellePartie() {
 	log("=== NOUVELLE PARTIE ===");
+	mettreAJourPlacementAutomatique();
 	grilleJoueur = initialiserGrilleVide();
 	grilleAdversaire = initialiserGrilleVide();
 	bateauxJoueur = [];
 	bateauxAdversaire = [];
 	initialiserBateauxAplacer();
+	cacherPanneauBateauxRestants();
 	rendreGrille("grille-joueur", grilleJoueur, true);
 	rendreGrille("grille-adversaire", grilleAdversaire, false);
 	demarrerPhasePlacement();
+}
+
+function mettreAJourPlacementAutomatique() {
+	const switchPlacement = obtenirElement("switch-placement-auto");
+	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
+	log("Placement auto mis a jour: " + placementAutomatique);
 }
 
 function initialiserEcouteurs() {
@@ -864,6 +872,16 @@ function initialiserEcouteurs() {
 	if (boutonNouvelle) {
 		boutonNouvelle.addEventListener("click", retourMenu);
 		log("Ecouteur bouton-nouvelle-partie OK");
+	}
+	const switchPlacement = obtenirElement("switch-placement-auto");
+	if (switchPlacement) {
+		switchPlacement.addEventListener("change", sauvegarderPreferences);
+		log("Ecouteur switch-placement-auto OK");
+	}
+	const inputTaille = obtenirElement("input-taille");
+	if (inputTaille) {
+		inputTaille.addEventListener("change", sauvegarderPreferences);
+		log("Ecouteur input-taille OK");
 	}
 	document.addEventListener("keydown", gererToucheClavier);
 	log("Ecouteur clavier OK");
@@ -906,7 +924,6 @@ function lancerPartieDepuisMenu() {
 	if (tailleGrille < 1) tailleGrille = 1;
 	if (tailleGrille > 63) tailleGrille = 63;
 	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
-	sauvegarderPreferences();
 	log("Taille grille: " + tailleGrille);
 	log("Placement auto: " + placementAutomatique);
 	calculerTailleCase();
@@ -958,22 +975,29 @@ function initialiserApplication() {
 }
 
 function sauvegarderPreferences() {
-	var preferences = {
-		placementAutomatique: placementAutomatique
+	const switchPlacement = obtenirElement("switch-placement-auto");
+	const inputTaille = obtenirElement("input-taille");
+	const preferences = {
+		placementAutomatique: switchPlacement ? switchPlacement.checked : true,
+		tailleGrille: inputTaille ? parseInt(inputTaille.value) || 10 : 10
 	};
 	localStorage.setItem("bataille_navale", JSON.stringify(preferences));
-	log("Preferences sauvegardees");
+	log("Preferences sauvegardees - placement auto: " + preferences.placementAutomatique + ", taille: " + preferences.tailleGrille);
 }
 
 function chargerPreferences() {
-	var donnees = localStorage.getItem("bataille_navale");
+	const donnees = localStorage.getItem("bataille_navale");
 	if (donnees) {
-		var preferences = JSON.parse(donnees);
-		var switchPlacement = obtenirElement("switch-placement-auto");
+		const preferences = JSON.parse(donnees);
+		const switchPlacement = obtenirElement("switch-placement-auto");
+		const inputTaille = obtenirElement("input-taille");
 		if (switchPlacement && preferences.placementAutomatique !== undefined) {
 			switchPlacement.checked = preferences.placementAutomatique;
-			log("Preferences chargees - placement auto: " + preferences.placementAutomatique);
 		}
+		if (inputTaille && preferences.tailleGrille !== undefined) {
+			inputTaille.value = preferences.tailleGrille;
+		}
+		log("Preferences chargees - placement auto: " + preferences.placementAutomatique + ", taille: " + preferences.tailleGrille);
 	}
 }
 
