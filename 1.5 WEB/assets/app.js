@@ -906,6 +906,7 @@ function lancerPartieDepuisMenu() {
 	if (tailleGrille < 1) tailleGrille = 1;
 	if (tailleGrille > 63) tailleGrille = 63;
 	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
+	sauvegarderPreferences();
 	log("Taille grille: " + tailleGrille);
 	log("Placement auto: " + placementAutomatique);
 	calculerTailleCase();
@@ -951,8 +952,29 @@ function chargerConfig() {
 function initialiserApplication() {
 	log("=== INIT APP ===");
 	chargerConfig();
+	chargerPreferences();
 	initialiserEcouteurs();
 	focusInputTaille();
+}
+
+function sauvegarderPreferences() {
+	var preferences = {
+		placementAutomatique: placementAutomatique
+	};
+	localStorage.setItem("bataille_navale", JSON.stringify(preferences));
+	log("Preferences sauvegardees");
+}
+
+function chargerPreferences() {
+	var donnees = localStorage.getItem("bataille_navale");
+	if (donnees) {
+		var preferences = JSON.parse(donnees);
+		var switchPlacement = obtenirElement("switch-placement-auto");
+		if (switchPlacement && preferences.placementAutomatique !== undefined) {
+			switchPlacement.checked = preferences.placementAutomatique;
+			log("Preferences chargees - placement auto: " + preferences.placementAutomatique);
+		}
+	}
 }
 
 function focusInputTaille() {
