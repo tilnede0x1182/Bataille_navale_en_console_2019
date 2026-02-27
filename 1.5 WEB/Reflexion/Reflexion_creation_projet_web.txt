@@ -320,3 +320,9 @@ Exemples :
 | 20×20   | 400     | 68          | 10         | 11              |
 | 50×50   | 2500    | 425         | 25         | 31              |
 | 100×100 | 10000   | 1700        | 50         | 65              |
+
+18.
+
+Afficher un panneau (en bas à gauche, style Frutiger Aero, fond rouge) montrant les bateaux restants à placer :
+- "N bateaux restants"
+- Détail par taille décroissante : "1 bateau de 5 cases", "2 bateaux de 3 cases", etc.

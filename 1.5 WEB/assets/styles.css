@@ -436,3 +436,39 @@ body {
 	transform: translateY(-2px);
 	box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
 }
+
+/* --------------------------------------------------------------------------
+   Panneau bateaux restants
+   -------------------------------------------------------------------------- */
+
+.panneau-bateaux-restants {
+	position: fixed;
+	bottom: 20px;
+	left: 20px;
+	background: linear-gradient(145deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.9));
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 15px;
+	padding: 1rem 1.5rem;
+	box-shadow: 0 8px 32px rgba(231, 76, 60, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	color: white;
+	z-index: 100;
+}
+
+.panneau-bateaux-restants h3 {
+	margin: 0 0 0.5rem 0;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.panneau-bateaux-restants ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.panneau-bateaux-restants li {
+	font-size: 0.9rem;
+	padding: 0.2rem 0;
+}

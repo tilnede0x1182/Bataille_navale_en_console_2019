@@ -26,6 +26,8 @@ let bateauxAplacer = [];
 let indexBateauActuel = 0;
 let orientationHorizontale = true;
 let tailleCase = 40;
+let derniereSurvolLigne = -1;
+let derniereSurvolColonne = -1;
 
 // IA procedurale
 const MODE_RECHERCHE = 0;
@@ -285,8 +287,56 @@ function demarrerPhasePlacement() {
 		rendreGrille("grille-joueur", grilleJoueur, true);
 		finirPhasePlacement();
 	} else {
+		rendreGrille("grille-joueur", grilleJoueur, true);
+		afficherPanneauBateauxRestants();
 		afficherMessage("Placez bateau " + (indexBateauActuel + 1) + " (taille " + bateauxAplacer[indexBateauActuel] + ") - R pour pivoter");
 	}
+}
+
+function afficherPanneauBateauxRestants() {
+	var panneau = obtenirElement("panneau-bateaux-restants");
+	if (!panneau) return;
+	var bateauxRestants = bateauxAplacer.slice(indexBateauActuel);
+	if (bateauxRestants.length === 0) {
+		panneau.style.display = "none";
+		return;
+	}
+	panneau.style.display = "block";
+	var compteurParTaille = compterBateauxParTaille(bateauxRestants);
+	var contenu = construireContenuPanneau(bateauxRestants.length, compteurParTaille);
+	panneau.replaceChildren();
+	panneau.appendChild(contenu);
+}
+
+function compterBateauxParTaille(bateaux) {
+	var compteur = {};
+	for (var idx = 0; idx < bateaux.length; idx++) {
+		var taille = bateaux[idx];
+		if (compteur[taille]) {
+			compteur[taille]++;
+		} else {
+			compteur[taille] = 1;
+		}
+	}
+	return compteur;
+}
+
+function construireContenuPanneau(nombreTotal, compteurParTaille) {
+	var conteneur = document.createDocumentFragment();
+	var titre = creerElement("h3", "");
+	titre.textContent = nombreTotal + " bateau" + (nombreTotal > 1 ? "x" : "") + " restant" + (nombreTotal > 1 ? "s" : "");
+	conteneur.appendChild(titre);
+	var liste = creerElement("ul", "");
+	var tailles = Object.keys(compteurParTaille).map(Number).sort(function(a, b) { return b - a; });
+	for (var idx = 0; idx < tailles.length; idx++) {
+		var taille = tailles[idx];
+		var nombre = compteurParTaille[taille];
+		var item = creerElement("li", "");
+		item.textContent = nombre + " bateau" + (nombre > 1 ? "x" : "") + " de " + taille + " case" + (taille > 1 ? "s" : "");
+		liste.appendChild(item);
+	}
+	conteneur.appendChild(liste);
+	return conteneur;
 }
 
 function placerBateauCasUnique() {
@@ -325,6 +375,8 @@ function gererSurvolCase(evenement) {
 	const caseElement = evenement.target;
 	const ligne = parseInt(caseElement.dataset.ligne);
 	const colonne = parseInt(caseElement.dataset.colonne);
+	derniereSurvolLigne = ligne;
+	derniereSurvolColonne = colonne;
 	afficherPreview(ligne, colonne);
 }
 
@@ -357,6 +409,9 @@ function pivoterBateau() {
 	orientationHorizontale = !orientationHorizontale;
 	log("Orientation: " + (orientationHorizontale ? "horizontale" : "verticale"));
 	afficherMessage("Orientation: " + (orientationHorizontale ? "horizontale" : "verticale"));
+	if (derniereSurvolLigne >= 0 && derniereSurvolColonne >= 0) {
+		afficherPreview(derniereSurvolLigne, derniereSurvolColonne);
+	}
 }
 
 function placerBateauManuel(cases) {
@@ -366,9 +421,18 @@ function placerBateauManuel(cases) {
 	rendreGrille("grille-joueur", grilleJoueur, true);
 	indexBateauActuel++;
 	if (indexBateauActuel >= bateauxAplacer.length) {
+		cacherPanneauBateauxRestants();
 		finirPhasePlacement();
 	} else {
+		afficherPanneauBateauxRestants();
 		afficherMessage("Placez bateau " + (indexBateauActuel + 1) + " (taille " + bateauxAplacer[indexBateauActuel] + ") - R pour pivoter");
+	}
+}
+
+function cacherPanneauBateauxRestants() {
+	var panneau = obtenirElement("panneau-bateaux-restants");
+	if (panneau) {
+		panneau.style.display = "none";
 	}
 }
 
