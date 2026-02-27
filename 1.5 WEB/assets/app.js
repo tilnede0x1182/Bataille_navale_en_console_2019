@@ -627,6 +627,7 @@ function verifierFinPartie() {
 
 function afficherModaleFinPartie(victoire) {
 	log("Affichage modale fin de partie - victoire: " + victoire);
+	supprimerModalesExistantes();
 	const overlay = creerElement("div", "modale-overlay");
 	const modale = creerElement("div", "modale");
 	const titre = creerElement("h2", victoire ? "modale-titre--victoire" : "modale-titre--defaite");
@@ -634,13 +635,20 @@ function afficherModaleFinPartie(victoire) {
 	const bouton = creerElement("button", victoire ? "modale-bouton--victoire" : "modale-bouton--defaite");
 	bouton.textContent = "OK";
 	bouton.addEventListener("click", function() {
-		overlay.remove();
+		supprimerModalesExistantes();
 		demarrerNouvellePartie();
 	});
 	modale.appendChild(titre);
 	modale.appendChild(bouton);
 	overlay.appendChild(modale);
 	document.body.appendChild(overlay);
+}
+
+function supprimerModalesExistantes() {
+	const modales = document.querySelectorAll(".modale-overlay");
+	modales.forEach(function(modale) {
+		modale.remove();
+	});
 }
 
 function tousCoules(bateaux) {
