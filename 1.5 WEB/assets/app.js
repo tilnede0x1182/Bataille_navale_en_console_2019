@@ -100,11 +100,19 @@ function coordonneesValides(ligne, colonne) {
 // ==============================================================================
 
 function calculerTailleCase() {
-	const largeurMax = 500;
-	tailleCase = Math.floor(largeurMax / tailleGrille);
+	var largeurEcran = window.innerWidth;
+	var margeSecurite = 40;
+	var gapZoneJeu = 32;
+	var paddingSection = 48;
+	var paddingGrille = 16;
+	var gapCases = 4;
+	var espaceFixeParGrille = paddingSection + paddingGrille + (gapCases * (tailleGrille - 1));
+	var largeurDisponible = largeurEcran - margeSecurite - gapZoneJeu - (espaceFixeParGrille * 2);
+	var largeurParGrille = largeurDisponible / 2;
+	tailleCase = Math.floor(largeurParGrille / tailleGrille);
 	if (tailleCase > 60) tailleCase = 60;
-	if (tailleCase < 30) tailleCase = 30;
-	log("Taille case: " + tailleCase + "px");
+	if (tailleCase < 10) tailleCase = 10;
+	log("Ecran: " + largeurEcran + "px, taille case: " + tailleCase + "px");
 }
 
 function rendreGrille(conteneurId, grille, cliquable) {
@@ -268,6 +276,10 @@ function demarrerPhasePlacement() {
 	log("Phase placement - auto: " + placementAutomatique);
 	phasePlacement = true;
 	partieEnCours = false;
+	if (tailleGrille === 1) {
+		placerBateauCasUnique();
+		return;
+	}
 	if (placementAutomatique) {
 		bateauxJoueur = placerBateauxAleatoire(grilleJoueur);
 		rendreGrille("grille-joueur", grilleJoueur, true);
@@ -275,6 +287,14 @@ function demarrerPhasePlacement() {
 	} else {
 		afficherMessage("Placez bateau " + (indexBateauActuel + 1) + " (taille " + bateauxAplacer[indexBateauActuel] + ") - R pour pivoter");
 	}
+}
+
+function placerBateauCasUnique() {
+	log("Cas unique 1x1 - placement automatique");
+	grilleJoueur[0][0] = "B";
+	bateauxJoueur = [{ cases: [{ ligne: 0, colonne: 0 }], coule: false }];
+	rendreGrille("grille-joueur", grilleJoueur, true);
+	finirPhasePlacement();
 }
 
 function gererClicPlacement(ligne, colonne) {
@@ -356,7 +376,12 @@ function finirPhasePlacement() {
 	log("Fin placement - Debut partie");
 	phasePlacement = false;
 	partieEnCours = true;
-	bateauxAdversaire = placerBateauxAleatoire(grilleAdversaire);
+	if (tailleGrille === 1) {
+		grilleAdversaire[0][0] = "B";
+		bateauxAdversaire = [{ cases: [{ ligne: 0, colonne: 0 }], coule: false }];
+	} else {
+		bateauxAdversaire = placerBateauxAleatoire(grilleAdversaire);
+	}
 	resetIA();
 	rendreGrille("grille-joueur", grilleJoueur, false);
 	rendreGrille("grille-adversaire", grilleAdversaire, true);
@@ -814,6 +839,8 @@ function lancerPartieDepuisMenu() {
 	const inputTaille = obtenirElement("input-taille");
 	const switchPlacement = obtenirElement("switch-placement-auto");
 	tailleGrille = parseInt(inputTaille.value) || 10;
+	if (tailleGrille < 1) tailleGrille = 1;
+	if (tailleGrille > 63) tailleGrille = 63;
 	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
 	log("Taille grille: " + tailleGrille);
 	log("Placement auto: " + placementAutomatique);
