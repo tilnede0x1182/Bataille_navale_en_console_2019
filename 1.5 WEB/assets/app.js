@@ -232,15 +232,36 @@ function initialiserBateauxAplacer() {
 }
 
 function calculerBateauxSelonGrille() {
-	if (tailleGrille >= 10) {
-		return [5, 4, 3, 3, 2];
-	} else if (tailleGrille >= 8) {
-		return [4, 3, 3, 2];
-	} else if (tailleGrille >= 6) {
-		return [3, 3, 2];
-	} else {
-		return [2, 2];
+	var surface = tailleGrille * tailleGrille;
+	var casesOccupees = Math.round(surface * 0.17);
+	var tailleMax = Math.max(2, Math.floor(tailleGrille / 2));
+	var tailleMin = 2;
+	var tailleMoyenne = (tailleMax + tailleMin) / 2;
+	var nombreBateaux = Math.max(1, Math.round(casesOccupees / tailleMoyenne));
+	var bateaux = genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees);
+	log("Surface: " + surface + ", cases occupees: " + casesOccupees + ", bateaux: " + nombreBateaux);
+	return bateaux;
+}
+
+function genererTaillesBateaux(nombreBateaux, tailleMax, tailleMin, casesOccupees) {
+	var bateaux = [];
+	var casesRestantes = casesOccupees;
+	for (var idx = 0; idx < nombreBateaux; idx++) {
+		var ratio = 1 - (idx / nombreBateaux);
+		var taille = Math.round(tailleMin + (tailleMax - tailleMin) * ratio);
+		taille = Math.max(tailleMin, Math.min(tailleMax, taille));
+		if (casesRestantes < taille) {
+			taille = Math.max(tailleMin, casesRestantes);
+		}
+		if (taille >= tailleMin && casesRestantes >= taille) {
+			bateaux.push(taille);
+			casesRestantes -= taille;
+		}
 	}
+	if (bateaux.length === 0) {
+		bateaux.push(tailleMin);
+	}
+	return bateaux;
 }
 
 function demarrerPhasePlacement() {
@@ -630,18 +651,28 @@ function afficherModaleFinPartie(victoire) {
 	supprimerModalesExistantes();
 	const overlay = creerElement("div", "modale-overlay");
 	const modale = creerElement("div", "modale");
+	const boutonFermer = creerElement("button", "modale-bouton-fermer");
+	boutonFermer.textContent = "×";
+	boutonFermer.addEventListener("click", fermerModaleSansRelancer);
 	const titre = creerElement("h2", victoire ? "modale-titre--victoire" : "modale-titre--defaite");
 	titre.textContent = victoire ? "Gagné" : "Perdu";
 	const bouton = creerElement("button", victoire ? "modale-bouton--victoire" : "modale-bouton--defaite");
 	bouton.textContent = "OK";
-	bouton.addEventListener("click", function() {
-		supprimerModalesExistantes();
-		demarrerNouvellePartie();
-	});
+	bouton.addEventListener("click", fermerModaleEtRelancer);
+	modale.appendChild(boutonFermer);
 	modale.appendChild(titre);
 	modale.appendChild(bouton);
 	overlay.appendChild(modale);
 	document.body.appendChild(overlay);
+}
+
+function fermerModaleEtRelancer() {
+	supprimerModalesExistantes();
+	demarrerNouvellePartie();
+}
+
+function fermerModaleSansRelancer() {
+	supprimerModalesExistantes();
 }
 
 function supprimerModalesExistantes() {
@@ -755,6 +786,27 @@ function gererToucheClavier(evenement) {
 			pivoterBateau();
 		}
 	}
+	if (evenement.key === "Enter") {
+		if (modaleOuverte()) {
+			fermerModaleEtRelancer();
+		} else if (menuVisible()) {
+			lancerPartieDepuisMenu();
+		}
+	}
+	if (evenement.key === "Escape") {
+		if (modaleOuverte()) {
+			fermerModaleSansRelancer();
+		}
+	}
+}
+
+function modaleOuverte() {
+	return document.querySelector(".modale-overlay") !== null;
+}
+
+function menuVisible() {
+	const menuConfig = obtenirElement("menu-config");
+	return menuConfig && menuConfig.style.display !== "none";
 }
 
 function lancerPartieDepuisMenu() {
@@ -762,8 +814,6 @@ function lancerPartieDepuisMenu() {
 	const inputTaille = obtenirElement("input-taille");
 	const switchPlacement = obtenirElement("switch-placement-auto");
 	tailleGrille = parseInt(inputTaille.value) || 10;
-	if (tailleGrille < 4) tailleGrille = 4;
-	if (tailleGrille > 10) tailleGrille = 10;
 	placementAutomatique = switchPlacement ? switchPlacement.checked : true;
 	log("Taille grille: " + tailleGrille);
 	log("Placement auto: " + placementAutomatique);
@@ -791,6 +841,7 @@ function retourMenu() {
 	if (zoneJeu) zoneJeu.style.display = "none";
 	if (zoneControles) zoneControles.style.display = "none";
 	partieEnCours = false;
+	focusInputTaille();
 }
 
 function chargerConfig() {
@@ -810,6 +861,15 @@ function initialiserApplication() {
 	log("=== INIT APP ===");
 	chargerConfig();
 	initialiserEcouteurs();
+	focusInputTaille();
+}
+
+function focusInputTaille() {
+	const inputTaille = obtenirElement("input-taille");
+	if (inputTaille) {
+		inputTaille.focus();
+		inputTaille.select();
+	}
 }
 
 // ==============================================================================

@@ -267,3 +267,56 @@ Bugs et fonctionnalites - 2026-02-27 (suite)
 15. Options -h et --help dans server.js
     - Affiche l'aide avec description des options
     - Format : "Usage: node server.js [options]" puis liste des options
+
+16.
+
+Résumé de l'algorithme des placemnt de bateaux en Java :
+
+- Nombre cases max = 60% de la surface grille
+- Tailles aléatoires entre 40% et 100% de min(hauteur, largeur)
+- Distance de sécurité entre bateaux (ne se touchent pas)
+- Gestion des échecs avec réduction de taille
+
+17.
+
+Proposer un calcul pour adapter le nombre et la taille des bateaux proportionnellement à la taille de la grille, en gardant 10x10 comme référence (règles officielles : 5 bateaux de tailles 5, 4, 3, 3, 2 = 17 cases).
+
+---
+Analyse :
+
+Référence 10x10 :
+- Surface : 100 cases
+- Bateaux : 5, 4, 3, 3, 2 (5 bateaux, 17 cases occupées)
+- Ratio occupation : 17%
+- Taille moyenne bateau : 3.4 cases
+- Taille max : 5 (50% de la dimension grille)
+
+Principes à conserver :
+1. Ratio occupation ~17% de la surface
+2. Taille max bateau = 50% de la dimension grille
+3. Taille min bateau = 2 cases
+4. Nombre de bateaux proportionnel à la surface
+
+Calcul proposé :
+
+surface = tailleGrille × tailleGrille
+casesOccupees = Math.round(surface × 0.17)
+tailleMax = Math.max(2, Math.floor(tailleGrille / 2))
+tailleMin = 2
+
+// Nombre de bateaux ≈ casesOccupees / tailleMoyenne
+// tailleMoyenne ≈ (tailleMax + tailleMin) / 2
+tailleMoyenne = (tailleMax + tailleMin) / 2
+nombreBateaux = Math.round(casesOccupees / tailleMoyenne)
+
+// Génération des tailles : distribution décroissante depuis tailleMax
+
+Exemples :
+
+| Grille  | Surface | Cases (17%) | Taille max | Bateaux estimés |
+|---------|---------|-------------|------------|-----------------|
+| 4×4     | 16      | 3           | 2          | 1-2             |
+| 10×10   | 100     | 17          | 5          | 5               |
+| 20×20   | 400     | 68          | 10         | 11              |
+| 50×50   | 2500    | 425         | 25         | 31              |
+| 100×100 | 10000   | 1700        | 50         | 65              |
