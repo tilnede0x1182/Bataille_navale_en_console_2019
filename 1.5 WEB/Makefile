@@ -1,3 +1,5 @@
 
 run:
-	node server.js
+	@ # debuage
+	@node server.js --triche
+	@#node server.js

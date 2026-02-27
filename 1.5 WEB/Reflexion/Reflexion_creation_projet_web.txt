@@ -95,3 +95,175 @@ Taches restantes
 5. Logs detailles partout
    - server.js : chaque requete (methode, URL, chemin, status)
    - app.js : chaque action (init, clic, tir, resultat, changement etat)
+
+___
+
+Nouvelles taches - 2026-02-27
+-----------------------------
+
+6. Taille par defaut = 10 (au lieu de 4)
+   - Modifier value="4" en value="10" dans index.html
+   - Modifier tailleGrille = 4 en tailleGrille = 10 dans app.js
+
+7. Diminuer la taille des cases
+   - Adapter la taille selon le nombre de cases (plus de cases = cases plus petites)
+   - Calcul dynamique : largeur disponible / nombre de cases
+   - Ne pas diminuer verticalement, seulement horizontalement
+
+8. Disposition grilles : joueur a gauche, adversaire a droite
+   - Verifier que le CSS flex place bien les grilles cote a cote
+   - Grille joueur en premier dans le HTML = a gauche
+
+9. Switch "Placement automatique" dans le menu configuration
+   - Checkbox/switch avec label "Placement automatique"
+   - Par defaut : coche (true) = placement aleatoire
+   - Si decoche : placement manuel avec preview/ombre du bateau
+
+10. Placement manuel avec ombre/preview
+    - Au survol : afficher une ombre du bateau a placer
+    - Clic pour placer (pas debut + fin)
+    - Touche R ou clic droit pour pivoter (horizontal/vertical)
+    - Validation automatique si position valide
+
+___
+
+Problemes constates - 2026-02-27
+--------------------------------
+
+1. Disposition grilles : empilees verticalement au lieu de cote a cote
+   - Cause probable : CSS flexbox wrap ou largeur insuffisante
+   - Solution : verifier .zone-jeu flex-direction et flex-wrap
+
+2. Clics sur mauvaise grille : on peut cliquer sur sa propre flotte
+   - Comportement attendu : cliquer uniquement sur grille adverse pour tirer
+   - Solution : rendre grille joueur non cliquable apres phase placement
+
+3. Nombre de bateaux insuffisant : seulement 2-3 bateaux
+   - Regles officielles : 5 bateaux
+   - Solution : adapter bateauxAplacer selon regles
+
+___
+
+Regles officielles Bataille Navale (Touche-Coule)
+-------------------------------------------------
+
+Source : Wikipedia, regles-de-jeux.com
+
+Grille : 10x10 (lignes 1-10, colonnes A-J)
+
+5 bateaux par joueur :
+- Porte-avions : 5 cases
+- Croiseur : 4 cases
+- Contre-torpilleur : 3 cases
+- Sous-marin : 3 cases
+- Torpilleur : 2 cases
+
+Total : 17 cases occupees
+
+Placement :
+- Horizontal ou vertical uniquement (jamais diagonal)
+- Bateaux ne se chevauchent pas
+- Variante : bateaux non adjacents (pas cote a cote)
+
+Deroulement :
+- Tour par tour
+- Annonce coordonnees (ex: A4)
+- Reponse : "rate", "touche", ou "touche coule"
+
+Fin : le premier a couler tous les bateaux adverses gagne
+
+___
+
+Adaptation pour grille variable (code Java)
+-------------------------------------------
+
+Le code Java (Bateau.java:56-61) calcule :
+- Nombre max de cases bateaux = (3/5) * (hauteur * largeur)
+- Ex: grille 10x10 = 100 cases -> max 60 cases de bateaux
+- Ex: grille 4x4 = 16 cases -> max 9 cases de bateaux
+
+Taille max d'un bateau = min(hauteur, largeur)
+- Ex: grille 10x10 -> bateau max 10 cases
+- Ex: grille 4x4 -> bateau max 4 cases
+
+Pour grille 10x10 standard : utiliser les 5 bateaux officiels (17 cases)
+Pour petites grilles : adapter proportionnellement
+
+___
+
+Corrections a implementer
+-------------------------
+
+1. CSS : forcer flex-direction: row sur .zone-jeu + flex-wrap: nowrap
+
+2. JS : rendreGrille("grille-joueur", ..., false) apres placement
+   - Grille joueur = non cliquable en phase jeu
+   - Grille adversaire = cliquable en phase jeu
+
+3. JS : adapter bateauxAplacer selon taille grille
+   - 10x10 : [5, 4, 3, 3, 2] (17 cases - officiel)
+   - 8x8 : [4, 3, 3, 2] (12 cases)
+   - 6x6 : [3, 3, 2] (8 cases)
+   - 4x4 : [2, 2] (4 cases)
+
+___
+
+Analyse code Java IA.java - Placement automatique
+-------------------------------------------------
+
+Algorithme de placement (place_bateaux_IA, lignes 157-174) :
+
+1. Calcul nombre cases max = (3/5) * (hauteur * largeur)
+   - Grille 10x10 : 60 cases max
+   - Grille 4x4 : 9 cases max
+
+2. Calcul nombre de bateaux :
+   - Division cases max par min(hauteur, largeur)
+   - Ajout 1 si reste non nul
+
+3. Calcul tailles bateaux (pour chaque bateau) :
+   - tailleMin = 40% de tailleMax
+   - taille = random entre tailleMin et tailleMax
+   - Garantit minimum 1 case
+
+4. Placement avec distance de securite :
+   - Marque cases adjacentes comme occupees
+   - Bateaux ne se touchent jamais
+
+5. Gestion echecs :
+   - 5 tentatives par taille
+   - Reduction taille si echec
+   - Dernier recours : 1 case
+
+Fonction cle : place_un_bateau_aux (lignes 226-246)
+- Cherche cases disponibles
+- Choisit aleatoirement
+- Marque le plateau
+
+Avantage : s'adapte automatiquement a toute taille de grille
+Inconvenient : nombre/taille bateaux non conforme aux regles officielles
+
+___
+
+Bugs et fonctionnalites - 2026-02-27 (suite)
+--------------------------------------------
+
+11. Bug IA : tire plusieurs fois sur case deja coulee
+    - Cause : iaCaseLibre() ne verifie pas ETAT_COULE
+    - Solution : ajouter verification ETAT_COULE dans iaCaseLibre()
+
+12. Bug fin de partie : pas de message victoire
+    - Cause : verifierFinPartie() pas appelee correctement ou logique incorrecte
+    - Solution : verifier la logique de tousCoules() et l'appel apres tir joueur
+
+13. Bug affichage : bateaux ennemis visibles
+    - Comportement attendu : bateaux adverses caches jusqu'a ce qu'ils soient touches
+    - Solution : ne pas appliquer classe case--bateau sur grille adversaire
+
+14. Option --triche dans server.js
+    - But : afficher les bateaux ennemis pour debuggage
+    - Implementation : variable globale MODE_TRICHE, passee au frontend via API ou cookie
+
+15. Options -h et --help dans server.js
+    - Affiche l'aide avec description des options
+    - Format : "Usage: node server.js [options]" puis liste des options

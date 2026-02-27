@@ -20,9 +20,32 @@
 		</header>
 
 		<!-- ============================================================== -->
+		<!-- Menu configuration -->
+		<!-- ============================================================== -->
+		<section id="menu-config" class="menu-config">
+			<div class="panneau-config">
+				<h2 class="titre-config">Configuration</h2>
+				<div class="groupe-input">
+					<label for="input-taille">Taille de la grille :</label>
+					<input type="number" id="input-taille" min="4" max="10" value="10">
+				</div>
+				<div class="groupe-switch">
+					<label class="switch-label">
+						<input type="checkbox" id="switch-placement-auto" checked>
+						<span class="switch-slider"></span>
+						<span class="switch-texte">Placement automatique</span>
+					</label>
+				</div>
+				<button id="bouton-commencer" class="bouton bouton-principal">
+					Commencer la partie
+				</button>
+			</div>
+		</section>
+
+		<!-- ============================================================== -->
 		<!-- Zone de jeu -->
 		<!-- ============================================================== -->
-		<main class="zone-jeu">
+		<main id="zone-jeu" class="zone-jeu" style="display: none;">
 
 			<!-- Grille du joueur -->
 			<section class="section-grille">
@@ -41,7 +64,7 @@
 		<!-- ============================================================== -->
 		<!-- Zone de controles -->
 		<!-- ============================================================== -->
-		<aside class="zone-controles">
+		<aside id="zone-controles" class="zone-controles" style="display: none;">
 			<div class="panneau-info">
 				<p id="message-statut" class="message-statut">Placez vos bateaux</p>
 			</div>

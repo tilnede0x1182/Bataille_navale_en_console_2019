@@ -57,9 +57,11 @@ body {
 
 .zone-jeu {
 	display: flex;
+	flex-direction: row;
 	justify-content: center;
-	gap: 3rem;
-	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 2rem;
+	flex-wrap: nowrap;
 }
 
 .section-grille {
@@ -214,4 +216,199 @@ body {
 	font-size: 0.9rem;
 	margin-top: auto;
 	padding-top: 1rem;
+}
+
+/* ============================================================================
+   Menu configuration
+   ============================================================================ */
+
+.menu-config {
+	display: flex;
+	justify-content: center;
+	padding: 2rem 0;
+}
+
+.panneau-config {
+	background: var(--couleur-verre);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--couleur-verre-bordure);
+	border-radius: var(--rayon-bordure);
+	padding: 2rem 3rem;
+	box-shadow: var(--ombre-verre);
+	text-align: center;
+}
+
+.titre-config {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--couleur-texte);
+	margin-bottom: 1.5rem;
+}
+
+.groupe-input {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.groupe-input label {
+	font-size: 1rem;
+	color: var(--couleur-texte);
+}
+
+.groupe-input input {
+	padding: 0.75rem 1rem;
+	font-size: 1.1rem;
+	border: 1px solid var(--couleur-verre-bordure);
+	border-radius: var(--rayon-case);
+	background: rgba(255, 255, 255, 0.8);
+	color: var(--couleur-texte);
+	text-align: center;
+	width: 100px;
+	margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Switch placement automatique
+   -------------------------------------------------------------------------- */
+
+.groupe-switch {
+	margin-bottom: 1.5rem;
+}
+
+.switch-label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	cursor: pointer;
+}
+
+.switch-label input {
+	display: none;
+}
+
+.switch-slider {
+	width: 50px;
+	height: 26px;
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 13px;
+	position: relative;
+	transition: background 0.3s ease;
+}
+
+.switch-slider::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 20px;
+	height: 20px;
+	background: white;
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	transition: transform 0.3s ease;
+}
+
+.switch-label input:checked + .switch-slider {
+	background: var(--couleur-accent);
+}
+
+.switch-label input:checked + .switch-slider::after {
+	transform: translateX(24px);
+}
+
+.switch-texte {
+	font-size: 1rem;
+	color: var(--couleur-texte);
+}
+
+/* --------------------------------------------------------------------------
+   Preview bateau (ombre au survol)
+   -------------------------------------------------------------------------- */
+
+.case--preview {
+	background: rgba(96, 125, 139, 0.4);
+	border: 2px dashed #607d8b;
+}
+
+.case--preview-invalide {
+	background: rgba(231, 76, 60, 0.3);
+	border: 2px dashed #e74c3c;
+}
+
+/* --------------------------------------------------------------------------
+   Modale fin de partie
+   -------------------------------------------------------------------------- */
+
+.modale-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.modale {
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.9));
+	border-radius: 20px;
+	padding: 3rem 4rem;
+	text-align: center;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.modale-titre--victoire {
+	font-size: 3rem;
+	color: #27ae60;
+	margin: 0 0 2rem 0;
+	text-shadow: 0 2px 4px rgba(39, 174, 96, 0.3);
+}
+
+.modale-titre--defaite {
+	font-size: 3rem;
+	color: #e74c3c;
+	margin: 0 0 2rem 0;
+	text-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.modale-bouton--victoire {
+	background: linear-gradient(145deg, #2ecc71, #27ae60);
+	color: white;
+	border: none;
+	padding: 1rem 3rem;
+	font-size: 1.2rem;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modale-bouton--victoire:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+}
+
+.modale-bouton--defaite {
+	background: linear-gradient(145deg, #e74c3c, #c0392b);
+	color: white;
+	border: none;
+	padding: 1rem 3rem;
+	font-size: 1.2rem;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modale-bouton--defaite:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
 }

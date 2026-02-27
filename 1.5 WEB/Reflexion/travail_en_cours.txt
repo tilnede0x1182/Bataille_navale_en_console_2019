@@ -1,0 +1,6 @@
+Résumé de l'algorithme des placemnt de bateaux en Java :
+
+- Nombre cases max = 60% de la surface grille
+- Tailles aléatoires entre 40% et 100% de min(hauteur, largeur)
+- Distance de sécurité entre bateaux (ne se touchent pas)
+- Gestion des échecs avec réduction de taille
