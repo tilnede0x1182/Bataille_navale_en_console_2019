@@ -1,77 +1,123 @@
-class Jeu {
-	Grille grille;
-	int nombre_de_joueurs;
+// ==============================================================================
+// Classe Jeu
+// ==============================================================================
 
-	// Utilitaire
-	Utilitaire u;
+/**
+ *	Classe principale du jeu de bataille navale.
+ *	Gère le déroulement de la partie et le menu principal.
+ */
+class Jeu {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
+	Grille grille;
+	int nombreDeJoueurs;
+	Utilitaire utilitaire;
 	Affichage affichage;
 	Menu menu;
 
-	public Jeu (int hauteur, int largeur, int nombre_de_joueurs) {
-		u = new Utilitaire();
-		menu = new Menu();
-		this.nombre_de_joueurs = nombre_de_joueurs;
-		grille = new Grille(hauteur, largeur);
-		affichage = new Affichage(grille);
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
+
+	/**
+	 *	Constructeur du jeu. Initialise la grille et lance le menu.
+	 *
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@param nombreJoueurs Nombre de joueurs
+	 */
+	public Jeu(int hauteur, int largeur, int nombreJoueurs) {
+		this.utilitaire = new Utilitaire();
+		this.menu = new Menu();
+		this.nombreDeJoueurs = nombreJoueurs;
+		this.grille = new Grille(hauteur, largeur);
+		this.affichage = new Affichage(grille);
+
 		affichage.affiche();
+		lancerMenuPrincipal();
+	}
 
-	// ####################### Tests ########################## //
+	// ==========================================================================
+	// Fonctions principales
+	// ==========================================================================
 
-		/*int [] tmp = menu.donne_cases_bateau (1, 2, grille.hauteur);
-		aff("ordonn�e case 1 : "+tmp[0]);
-		aff("abscisse case 1 : "+tmp[1]);
-		aff("ordonn�e case fin : "+tmp[2]);
-		aff("abscisse case fin : "+tmp[3]);*/
-
+	/**
+	 *	Lance le menu principal en boucle jusqu'à ce que le joueur quitte.
+	 */
+	private void lancerMenuPrincipal() {
 		int choix;
 		while (true) {
 			choix = menu.menu_principal();
-			if (choix==3) System.exit(0);
+			if (choix == 3) {
+				System.exit(0);
+			}
 		}
-		// A continuer...
 	}
 
-	public void initialisation_du_jeu () {
-
+	/**
+	 *	Initialise le jeu (à compléter).
+	 */
+	public void initialisationDuJeu() {
+		// À implémenter
 	}
 
-	public void partie () {
-
+	/**
+	 *	Lance une partie (à compléter).
+	 */
+	public void partie() {
+		// À implémenter
 	}
 
+	// --------------------------------------------------------------------------
+	// Placement des bateaux
+	// --------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ################# Fonctions utiliaires du jeu ################## //
-
-	public void placer_un_bateau (int case_debut, int case_fin, int nombre_de_cases) {
-		
+	/**
+	 *	Place un bateau sur la grille (à compléter).
+	 *
+	 *	@param caseDebut Case de début du bateau
+	 *	@param caseFin Case de fin du bateau
+	 *	@param nombreCases Nombre de cases du bateau
+	 */
+	public void placerUnBateau(int caseDebut, int caseFin, int nombreCases) {
+		// À implémenter
 	}
 
-// ############################## Main ############################ //
+	// ==========================================================================
+	// Main
+	// ==========================================================================
 
-	public static void main (String [] args) {
+	/**
+	 *	Point d'entrée du programme.
+	 *
+	 *	@param args Arguments de la ligne de commande
+	 */
+	public static void main(String[] args) {
 		Jeu jeu = new Jeu(5, 5, 1);
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

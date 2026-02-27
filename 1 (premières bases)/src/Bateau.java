@@ -1,101 +1,154 @@
-class Bateau {
-	int nombre_de_cases;
-	int nombre_de_cases_restantes;
-	int joueur;
+// ==============================================================================
+// Classe Bateau
+// ==============================================================================
 
-	// Utilitaire
+/**
+ *	Représente un bateau dans le jeu de bataille navale.
+ *	Gère le nombre de cases, l'état du bateau et les attaques.
+ */
+class Bateau {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
+	int nombreDeCases;
+	int nombreDeCasesRestantes;
+	int joueur;
 	Menu menu;
 
-	/**
-		int joueur : num�ro du joueur
-	**/
-	public Bateau (int nombre_de_cases, int joueur) {
-		menu = new Menu();
-		this.nombre_de_cases = nombre_de_cases;
-		this.nombre_de_cases = nombre_de_cases_restantes;
-		this.joueur = joueur;
-	}
-
-// ######## Fonctions utilitaires pour les bateaux ######### //
-
-// ###************** Placement des bateaux **************### //
-
-	public int nombre_de_place_de_bateau (int nombre_de_joueurs, 
-		int proposition, int hauteur, int largeur) {
-		int nombre_de_cases_total = hauteur*largeur;
-		int max_autorise = nombre_de_place_de_bateau_max(nombre_de_joueurs, 
-								hauteur, largeur);
-
-		if (proposition<max_autorise) return proposition;
-		else return max_autorise;
-	}
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
 
 	/**
-		Renvoie le nombre de cases max.
+	 *	Constructeur du bateau.
+	 *
+	 *	@param nombreCases Nombre de cases occupées par le bateau
+	 *	@param numeroJoueur Numéro du joueur propriétaire du bateau
+	 */
+	public Bateau(int nombreCases, int numeroJoueur) {
+		this.menu = new Menu();
+		this.nombreDeCases = nombreCases;
+		this.nombreDeCasesRestantes = nombreCases;
+		this.joueur = numeroJoueur;
+	}
 
-		Soit n le nombre de joueurs
-		et m le nombre de cases total
-		de la grille.
+	// ==========================================================================
+	// Fonctions principales - Placement des bateaux
+	// ==========================================================================
 
-		Calcul : res = (1/(n+1))*m
-	**/
-	public int nombre_de_place_de_bateau_max (int nombre_de_joueurs, 
-		int hauteur, int largeur) {
-
-		int nombre_de_cases_total = hauteur*largeur;
-		int max_autorise = (int)((1.0/(nombre_de_joueurs+1))*nombre_de_cases_total);
-
-		return max_autorise;
+	/**
+	 *	Calcule le nombre de places de bateau autorisé.
+	 *	Retourne la proposition si elle est inférieure au max autorisé.
+	 *
+	 *	@param nombreJoueurs Nombre de joueurs dans la partie
+	 *	@param proposition Nombre de places proposé
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@return Nombre de places autorisé
+	 */
+	public int nombreDePlaceDeBateau(int nombreJoueurs, int proposition, int hauteur, int largeur) {
+		int maxAutorise = nombreDePlaceDeBateauMax(nombreJoueurs, hauteur, largeur);
+		return (proposition < maxAutorise) ? proposition : maxAutorise;
 	}
 
 	/**
-		Donne la taille max d'un bateau
-		en fonction du nombre de cases restant.
-	**/
-	public int taille_max_bateau (int nombre_de_cases_restant, 
-		int proposition, int hauteur, int largeur) {
-		int max_hauteur_largeur = Math.min(hauteur, largeur);
+	 *	Calcule le nombre maximum de cases pour les bateaux.
+	 *	Formule : (1 / (nombreJoueurs + 1)) * nombreCasesTotal
+	 *
+	 *	@param nombreJoueurs Nombre de joueurs dans la partie
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@return Nombre maximum de cases autorisées
+	 */
+	public int nombreDePlaceDeBateauMax(int nombreJoueurs, int hauteur, int largeur) {
+		int nombreCasesTotal = hauteur * largeur;
+		int maxAutorise = (int) ((1.0 / (nombreJoueurs + 1)) * nombreCasesTotal);
+		return maxAutorise;
+	}
 
-		if (proposition<nombre_de_cases_restant) {
-			if (proposition>max_hauteur_largeur) return max_hauteur_largeur;
-			else return proposition;
+	// --------------------------------------------------------------------------
+	// Taille des bateaux
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Détermine la taille maximale d'un bateau selon les contraintes.
+	 *
+	 *	@param nombreCasesRestant Nombre de cases encore disponibles
+	 *	@param proposition Taille proposée
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@return Taille maximale autorisée
+	 */
+	public int tailleMaxBateau(int nombreCasesRestant, int proposition, int hauteur, int largeur) {
+		int maxHauteurLargeur = Math.min(hauteur, largeur);
+
+		if (proposition < nombreCasesRestant) {
+			return (proposition > maxHauteurLargeur) ? maxHauteurLargeur : proposition;
 		}
-		else return nombre_de_cases_restant;
+		return nombreCasesRestant;
 	}
 
 	/**
-		Donne les bateaux d'un joueur
-		Chaque case du tableau int[] 
-		contient le nombre du case d'un bateau.
-	**/
-	public int [] donne_les_bateaux (int nombre_de_joueurs, int hauteur, int largeur) {
-		int nombre_de_place_de_bateau_max = nombre_de_place_de_bateau_max(nombre_de_joueurs, hauteur, largeur);
-
-		int [] res = menu.entre_nombre_de_case_bateau(nombre_de_place_de_bateau_max);		
-
-		return res;
+	 *	Récupère les bateaux d'un joueur via le menu.
+	 *	Chaque élément du tableau contient le nombre de cases d'un bateau.
+	 *
+	 *	@param nombreJoueurs Nombre de joueurs dans la partie
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@return Tableau des tailles de bateaux
+	 */
+	public int[] donneLesBateaux(int nombreJoueurs, int hauteur, int largeur) {
+		int nombrePlaceMax = nombreDePlaceDeBateauMax(nombreJoueurs, hauteur, largeur);
+		int[] resultat = menu.entre_nombre_de_case_bateau(nombrePlaceMax);
+		return resultat;
 	}
 
-// ###********************* Attaque *********************### //
+	// ==========================================================================
+	// Fonctions principales - Combat
+	// ==========================================================================
 
-	public void attaque () {
-		this.nombre_de_cases_restantes = this.nombre_de_cases_restantes-1;
+	/**
+	 *	Enregistre une attaque sur le bateau.
+	 *	Décrémente le nombre de cases restantes.
+	 */
+	public void attaque() {
+		this.nombreDeCasesRestantes = this.nombreDeCasesRestantes - 1;
 	}
 
-// ################# Fonctions d'affichage ################# //
+	// ==========================================================================
+	// Fonctions d'affichage
+	// ==========================================================================
 
+	/**
+	 *	Retourne la représentation textuelle du bateau.
+	 *
+	 *	@return Chaîne au format "BX" où X est le numéro du joueur
+	 */
 	public String toString() {
-		String res = "B"+joueur;
-		return res;
+		return "B" + joueur;
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

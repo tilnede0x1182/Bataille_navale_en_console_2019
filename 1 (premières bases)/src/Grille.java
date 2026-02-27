@@ -1,69 +1,108 @@
+// ==============================================================================
+// Classe Grille
+// ==============================================================================
+
+/**
+ *	Représente la grille de jeu de la bataille navale.
+ *	Gère le plateau de jeu et les attaques sur les cases.
+ */
 class Grille {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
 	public int hauteur;
 	public int largeur;
+	public Bateau[][] grille;
+	Utilitaire utilitaire;
 
-	Utilitaire u;
-	public Bateau [][] grille;
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
 
-	public Grille (int hauteur, int largeur) {
-		u = new Utilitaire();
-		this.hauteur = hauteur;
-		this.largeur = largeur;
+	/**
+	 *	Constructeur de la grille.
+	 *
+	 *	@param hauteurGrille Hauteur de la grille
+	 *	@param largeurGrille Largeur de la grille
+	 */
+	public Grille(int hauteurGrille, int largeurGrille) {
+		this.utilitaire = new Utilitaire();
+		this.hauteur = hauteurGrille;
+		this.largeur = largeurGrille;
 		this.grille = new Bateau[hauteur][largeur];
 	}
 
-	public void initialisation_de_la_grille () {
-		int i, j;
+	// ==========================================================================
+	// Fonctions principales - Initialisation
+	// ==========================================================================
 
-		for (i=0; i<hauteur; i++) {
-			for (j=0; j<largeur; j++) {
-				grille[i][j] = null;
+	/**
+	 *	Initialise toutes les cases de la grille à null.
+	 */
+	public void initialisationDeLaGrille() {
+		for (int ligne = 0; ligne < hauteur; ligne++) {
+			for (int colonne = 0; colonne < largeur; colonne++) {
+				grille[ligne][colonne] = null;
 			}
 		}
 	}
 
-// ###################### Attaquer une case ####################### //
+	// ==========================================================================
+	// Fonctions principales - Combat
+	// ==========================================================================
 
 	/**
-		renvoie un boolean :
-			true : touch�
-			false : "dans l'eau !"			
-	**/
-	public boolean attaquer_une_case (int ordonnee, int abscisse) {
-		// "Dans l'eau !"
-		if (grille[ordonnee][abscisse]==null) return false;
-		// touch�
-		else {
-			grille[ordonnee][abscisse].attaque();
-			return true;
+	 *	Attaque une case de la grille.
+	 *
+	 *	@param ordonnee Coordonnée Y de la case (ligne)
+	 *	@param abscisse Coordonnée X de la case (colonne)
+	 *	@return true si touché, false si dans l'eau
+	 */
+	public boolean attaquerUneCase(int ordonnee, int abscisse) {
+		if (grille[ordonnee][abscisse] == null) {
+			return false;
 		}
+		grille[ordonnee][abscisse].attaque();
+		return true;
 	}
 
-// ###################### Ajout d'un bateau ####################### //
+	// ==========================================================================
+	// Fonctions principales - Placement
+	// ==========================================================================
 
 	/**
-		int nombre_de_cases : nombre de cases du bateau
-		int joueur : num�ro du joueur
-	**/
-	public void ajoute_un_bateau_une_case (int ordonnee, int abscisse, int nombre_de_cases, int joueur) {
-		grille[ordonnee][abscisse] = new Bateau(nombre_de_cases, joueur);
+	 *	Ajoute un bateau d'une case à la position spécifiée.
+	 *
+	 *	@param ordonnee Coordonnée Y de la case
+	 *	@param abscisse Coordonnée X de la case
+	 *	@param nombreCases Nombre de cases du bateau
+	 *	@param numeroJoueur Numéro du joueur propriétaire
+	 */
+	public void ajouteUnBateauUneCase(int ordonnee, int abscisse, int nombreCases, int numeroJoueur) {
+		grille[ordonnee][abscisse] = new Bateau(nombreCases, numeroJoueur);
 	}
 
-	/*public void ajoute_bateau (int case_1, int cas_fin) {
-		int i;
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
 
-		for (i=0; i<
-	}*/
-
-//################ Fonctions utilitaires du jeu ################//
-
-// ################### Fonctions utilitaires ###################### //
-
-	public void aff (String oo) {
-		System.out.println(oo);
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

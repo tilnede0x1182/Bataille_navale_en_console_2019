@@ -1,23 +1,23 @@
-Commencé mardi 3/12/2019
-1.2 commencé le 5/12/2019
+CommencÃ© mardi 3/12/2019
+1.2 commencÃ© le 5/12/2019
 1.2 -> jeu jouable le 12/12/2019
 
-- Jeu avec IA aléatoire et bateaux
-placés automatiquement avec un espacement de 1 entre eux
+- Jeu avec IA alÃ©atoire et bateaux
+placÃ©s automatiquement avec un espacement de 1 entre eux
 - Ne bug pas lorsque le nombre de bateaux
-initialement déterminé par l'IA n'a pas pu
-être placé -> met moins de bateaux.
+initialement dÃ©terminÃ© par l'IA n'a pas pu
+Ãªtre placÃ© -> met moins de bateaux.
 
-1.4 (IA) prêt à être entammé le 12/12/2019
+1.4 (IA) prÃªt Ã  Ãªtre entammÃ© le 12/12/2019
 
-Objectif : l'IA doit être capable de jouer
-un bateaux entier d'affilé si elle touche une
-case avec probabilité d'erreur (car elle n'a pas accès
-aux cases exactes du bateau mais voit la même choses que
+Objectif : l'IA doit Ãªtre capable de jouer
+un bateaux entier d'affilÃ© si elle touche une
+case avec probabilitÃ© d'erreur (car elle n'a pas accÃ¨s
+aux cases exactes du bateau mais voit la mÃªme choses que
 n'importe quel autre joueur).
 
-Travaillé chaque jour environs de 3 à 6 heures par jour
+TravaillÃ© chaque jour environs de 3 Ã  6 heures par jour
 
 Pause le lundi 9/12/2019
 
--> 10 jours de dev à ce jour.
+-> 10 jours de dev Ã  ce jour.

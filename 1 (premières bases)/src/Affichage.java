@@ -1,72 +1,148 @@
-class Affichage {
-	Grille grille;
-	int nombre_d_espaces;
+// ==============================================================================
+// Classe Affichage
+// ==============================================================================
 
-	public Affichage (Grille grille) {
-		this.grille = grille;
-		this.nombre_d_espaces = 3;
+/**
+ *	Gère l'affichage de la grille de jeu en console.
+ */
+class Affichage {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
+	Grille grille;
+	int nombreEspaces;
+
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
+
+	/**
+	 *	Constructeur de la classe Affichage.
+	 *
+	 *	@param grilleJeu La grille de jeu à afficher
+	 */
+	public Affichage(Grille grilleJeu) {
+		this.grille = grilleJeu;
+		this.nombreEspaces = 3;
 	}
 
-	public void affiche () {
-		char c = 'A';
-		int i, j, h;
+	// ==========================================================================
+	// Fonctions principales
+	// ==========================================================================
+
+	/**
+	 *	Affiche la grille de jeu complète avec les coordonnées.
+	 */
+	public void affiche() {
 		int hauteur = grille.hauteur;
 		int largeur = grille.largeur;
 
-		affiche_espaces(nombre_d_espaces+1);
-		for (i=0; i<largeur; i++) {
-			affnn(""+(i+1));
-			if (i>(9-1))
-				affiche_espaces(nombre_d_espaces-1);
-			else
-				affiche_espaces(nombre_d_espaces);
-		}
-		affiche_sauts_de_ligne(1);
+		afficherEnTeteColonnes(largeur);
+		afficherLignesGrille(hauteur, largeur);
+	}
 
-		affiche_sauts_de_ligne(1);
-		for (i=0; i<hauteur; i++) {
-			affnn(""+(c++));
-			affiche_espaces(nombre_d_espaces);
-			for (j=0; j<largeur; j++) {
-				if (grille.grille[i][j]!=null) {
-					affnn(grille.grille[i][j].toString());
-					affiche_espaces(1);
-				}
-				else {
-					affnn("0");
-					affiche_espaces(nombre_d_espaces);
-				}
-			}
-			affiche_sauts_de_ligne(2);
+	// --------------------------------------------------------------------------
+	// Affichage de la grille
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Affiche l'en-tête des colonnes (numéros 1, 2, 3...).
+	 *
+	 *	@param largeur Nombre de colonnes de la grille
+	 */
+	private void afficherEnTeteColonnes(int largeur) {
+		afficheEspaces(nombreEspaces + 1);
+		for (int colonne = 0; colonne < largeur; colonne++) {
+			affnn("" + (colonne + 1));
+			int espaces = (colonne > 8) ? nombreEspaces - 1 : nombreEspaces;
+			afficheEspaces(espaces);
+		}
+		afficheSautsDeLigne(1);
+	}
+
+	/**
+	 *	Affiche toutes les lignes de la grille.
+	 *
+	 *	@param hauteur Nombre de lignes de la grille
+	 *	@param largeur Nombre de colonnes de la grille
+	 */
+	private void afficherLignesGrille(int hauteur, int largeur) {
+		char lettreCoordonnee = 'A';
+
+		afficheSautsDeLigne(1);
+		for (int ligne = 0; ligne < hauteur; ligne++) {
+			affnn("" + (lettreCoordonnee++));
+			afficheEspaces(nombreEspaces);
+			afficherContenuLigne(ligne, largeur);
+			afficheSautsDeLigne(2);
 		}
 	}
 
-// ############# Fonctions utilitaires d'affichage ################ //
+	/**
+	 *	Affiche le contenu d'une ligne de la grille.
+	 *
+	 *	@param ligne Index de la ligne à afficher
+	 *	@param largeur Nombre de colonnes de la grille
+	 */
+	private void afficherContenuLigne(int ligne, int largeur) {
+		for (int colonne = 0; colonne < largeur; colonne++) {
+			if (grille.grille[ligne][colonne] != null) {
+				affnn(grille.grille[ligne][colonne].toString());
+				afficheEspaces(1);
+			} else {
+				affnn("0");
+				afficheEspaces(nombreEspaces);
+			}
+		}
+	}
 
+	// ==========================================================================
+	// Fonctions utilitaires d'affichage
+	// ==========================================================================
 
-// ################### Fonctions utilitaires ###################### //
-
-	public void affiche_espaces (int nombre_d_espaces) {
-		int i;
-
-		for (i=0; i<nombre_d_espaces; i++) {
+	/**
+	 *	Affiche un nombre donné d'espaces.
+	 *
+	 *	@param nombreEspacesAAfficher Nombre d'espaces à afficher
+	 */
+	public void afficheEspaces(int nombreEspacesAAfficher) {
+		for (int index = 0; index < nombreEspacesAAfficher; index++) {
 			affnn(" ");
 		}
 	}
 
-	public void affiche_sauts_de_ligne (int nombre_de_lignes) {
-		int i;
-
-		for (i=0; i<nombre_de_lignes; i++) {
+	/**
+	 *	Affiche un nombre donné de sauts de ligne.
+	 *
+	 *	@param nombreLignes Nombre de sauts de ligne à afficher
+	 */
+	public void afficheSautsDeLigne(int nombreLignes) {
+		for (int index = 0; index < nombreLignes; index++) {
 			affnn("\n");
 		}
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
+
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

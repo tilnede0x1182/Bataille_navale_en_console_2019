@@ -1,133 +1,193 @@
+// ==============================================================================
+// Classe Utilitaire
+// ==============================================================================
+
+/**
+ *	Classe utilitaire regroupant les fonctions communes au jeu.
+ */
 class Utilitaire {
 
-	public Utilitaire() {}
-
-//################ Fonctions utilitaires du jeu ################//
-
-	public boolean tmp () {
-		return true;
-	}
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
 
 	/**
-		Format correct : A5.
-	**/
-	public boolean verifie_format_case (String s0, int hauteur) {
-		char tmp, tmp2;
-		if (s0==null) return false;
-		if (s0.length()==2) {
-			tmp = s0.charAt(0);
-			if (tmp>='A' && tmp<=('A'+(hauteur-1))) {
-				tmp2 = s0.charAt(1);
-				if (is_integer(""+tmp2)) return true;
-				else return false;
-			} else return false;
-		} else return false;
+	 *	Constructeur par défaut.
+	 */
+	public Utilitaire() {
 	}
 
-	/**
-		On donne des coordonn�es type A5
-		et la fonction donne 1, 5 pour A5
-	**/
-	public int [] convertit_case_en_coordonnee (String s0, int hauteur) {
-		int [] res = new int[2];
-		char c='A';
-		int ordonnee;
-		int abscisse;
+	// ==========================================================================
+	// Fonctions principales - Validation
+	// ==========================================================================
 
-		if (verifie_format_case(s0, hauteur)) {
-			ordonnee = (int)(s0.charAt(0)-(int)('A')+1);
-			abscisse = (int)(s0.charAt(1)-(int)('0'));
-			res[0] = ordonnee;
-			res[1] = abscisse;
+	/**
+	 *	Vérifie le format d'une case (ex: A5).
+	 *
+	 *	@param chaine Chaîne à vérifier
+	 *	@param hauteur Hauteur de la grille
+	 *	@return true si le format est valide, false sinon
+	 */
+	public boolean verifie_format_case(String chaine, int hauteur) {
+		if (chaine == null || chaine.length() != 2) {
+			return false;
 		}
-		else {
+		char lettre = chaine.charAt(0);
+		char chiffre = chaine.charAt(1);
+
+		boolean lettreValide = (lettre >= 'A' && lettre <= ('A' + (hauteur - 1)));
+		boolean chiffreValide = is_integer("" + chiffre);
+
+		return lettreValide && chiffreValide;
+	}
+
+	/**
+	 *	Convertit une case au format "A5" en coordonnées [ordonnée, abscisse].
+	 *
+	 *	@param chaine Case au format lettre-chiffre
+	 *	@param hauteur Hauteur de la grille
+	 *	@return Tableau [ordonnée, abscisse] ou null si format invalide
+	 */
+	public int[] convertit_case_en_coordonnee(String chaine, int hauteur) {
+		if (!verifie_format_case(chaine, hauteur)) {
 			aff("convertit_case_en_coordonnee : Format incorrect");
 			return null;
 		}
-
-		return res;
+		int[] resultat = new int[2];
+		resultat[0] = (int) (chaine.charAt(0) - 'A' + 1);
+		resultat[1] = (int) (chaine.charAt(1) - '0');
+		return resultat;
 	}
 
-	public boolean compare_coordonneee (int ordonnee_source, int abscisse_source, int ordonnee_but, int abscisse_but) {
-		return (ordonnee_source==ordonnee_but &&
-			abscisse_source==abscisse_but);
-	}
+	// --------------------------------------------------------------------------
+	// Comparaison de coordonnées
+	// --------------------------------------------------------------------------
 
 	/**
-		Un bateau peut �tre soit horizontal ou vertical soit oblique.
-		Cas :
+	 *	Compare deux paires de coordonnées.
+	 *
+	 *	@param ordonneeSource Ordonnée de la source
+	 *	@param abscisseSource Abscisse de la source
+	 *	@param ordonneeBut Ordonnée de la cible
+	 *	@param abscisseBut Abscisse de la cible
+	 *	@return true si les coordonnées sont identiques
+	 */
+	public boolean compareCoordonnee(int ordonneeSource, int abscisseSource, int ordonneeBut, int abscisseBut) {
+		return (ordonneeSource == ordonneeBut && abscisseSource == abscisseBut);
+	}
 
-		case_fin est �gale � case_1
-		case_fin � gauche de case_1
-		case_fin � droite de case_1
-		case_fin en haut de case_1
-		case_fin en bas de case_1		
-	**/
-	public boolean verifie_placement_bateau (int [] case_1, int [] case_fin, int nombre_de_cases) {
-		int tmp = 0;
+	// ==========================================================================
+	// Fonctions principales - Placement des bateaux
+	// ==========================================================================
 
-		if (case_1[0]==case_fin[0] && case_1[1]==case_fin[1]) {
-			if (nombre_de_cases==1) return true;
-			else return false;
+	/**
+	 *	Vérifie si le placement d'un bateau est valide.
+	 *	Le bateau peut être horizontal ou vertical, pas diagonal.
+	 *
+	 *	@param case1 Coordonnées de la première case [ordonnée, abscisse]
+	 *	@param caseFin Coordonnées de la dernière case [ordonnée, abscisse]
+	 *	@param nombreCases Nombre de cases du bateau
+	 *	@return true si le placement est valide, false sinon
+	 */
+	public boolean verifie_placement_bateau(int[] case1, int[] caseFin, int nombreCases) {
+		if (estMemeCaseEtBateauUneCase(case1, caseFin, nombreCases)) {
+			return true;
 		}
-		//Horizontal
-		if (case_1[0]==case_fin[0]) {
-			//case_fin en haut de case_1
-			if (case_fin[1]<case_1[1]) {
-				tmp = case_1[1]-case_fin[1];
-				if (tmp==nombre_de_cases && tmp>0) return true;
-				else return false;
-			}
-			//case_fin en bas de case_1
-			if (case_fin[1]>case_1[1]) {
-				tmp = case_fin[1]-case_1[1];
-				if (tmp==nombre_de_cases && tmp>0) return true;
-				else return false;
-			}
+		if (estPlacementHorizontalValide(case1, caseFin, nombreCases)) {
+			return true;
 		}
-		//Vertical
-		if (case_1[1]==case_fin[1]) {
-			//case_fin � gauche de case_1
-			if (case_fin[0]<case_1[0]) {
-				tmp = case_1[1]-case_fin[1];
-				if (tmp==nombre_de_cases && tmp>0) return true;
-				else return false;
-			}
-			//case_fin � droite de case_1
-			if (case_fin[0]>case_1[0]) {
-				tmp = case_fin[1]-case_1[1];
-				if (tmp==nombre_de_cases && tmp>0) return true;
-				else return false;
-			}
+		if (estPlacementVerticalValide(case1, caseFin, nombreCases)) {
+			return true;
 		}
 		return false;
 	}
 
-//################### Fonctions utilitaires ####################//
+	/**
+	 *	Vérifie si c'est un bateau d'une case sur la même position.
+	 */
+	private boolean estMemeCaseEtBateauUneCase(int[] case1, int[] caseFin, int nombreCases) {
+		boolean memeCases = (case1[0] == caseFin[0] && case1[1] == caseFin[1]);
+		return memeCases && nombreCases == 1;
+	}
 
-	public boolean is_integer (String s0) {
-		try {
-			int n1 = Integer.parseInt(s0);
-			return true;
+	/**
+	 *	Vérifie si le placement horizontal est valide.
+	 */
+	private boolean estPlacementHorizontalValide(int[] case1, int[] caseFin, int nombreCases) {
+		if (case1[0] != caseFin[0]) {
+			return false;
 		}
-		catch (Exception e) {
+		int distance = Math.abs(caseFin[1] - case1[1]);
+		return (distance == nombreCases && distance > 0);
+	}
+
+	/**
+	 *	Vérifie si le placement vertical est valide.
+	 */
+	private boolean estPlacementVerticalValide(int[] case1, int[] caseFin, int nombreCases) {
+		if (case1[1] != caseFin[1]) {
+			return false;
+		}
+		int distance = Math.abs(caseFin[0] - case1[0]);
+		return (distance == nombreCases && distance > 0);
+	}
+
+	// ==========================================================================
+	// Fonctions utilitaires - Conversion
+	// ==========================================================================
+
+	/**
+	 *	Vérifie si une chaîne représente un entier.
+	 *
+	 *	@param chaine Chaîne à vérifier
+	 *	@return true si c'est un entier, false sinon
+	 */
+	public boolean is_integer(String chaine) {
+		try {
+			Integer.parseInt(chaine);
+			return true;
+		} catch (Exception erreur) {
 			return false;
 		}
 	}
 
-	public int randInt (int min, int max) {
-		int res = (int)(Math.random()*max)+min;
-		if (res>max) res = max;
-		if (res<min) res = min;
-
-		return res;
+	/**
+	 *	Génère un entier aléatoire entre min et max inclus.
+	 *
+	 *	@param min Valeur minimale
+	 *	@param max Valeur maximale
+	 *	@return Entier aléatoire
+	 */
+	public int randInt(int min, int max) {
+		int resultat = (int) (Math.random() * max) + min;
+		if (resultat > max) {
+			resultat = max;
+		}
+		if (resultat < min) {
+			resultat = min;
+		}
+		return resultat;
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	// ==========================================================================
+	// Fonctions utilitaires - Affichage
+	// ==========================================================================
+
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

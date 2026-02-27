@@ -1,159 +1,244 @@
+// ==============================================================================
+// Classe Menu
+// ==============================================================================
+
 import java.util.Scanner;
 
+/**
+ *	GÃ¨re les menus et les saisies utilisateur du jeu.
+ */
 class Menu {
-	Utilitaire u;
 
+	// ==========================================================================
+	// DonnÃ©es
+	// ==========================================================================
+
+	Utilitaire utilitaire;
+
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
+
+	/**
+	 *	Constructeur du menu.
+	 */
 	public Menu() {
-		Utilitaire u = new Utilitaire();
+		this.utilitaire = new Utilitaire();
 	}
 
-	public int menu_principal () {
-		int res = -1;
+	// ==========================================================================
+	// Fonctions principales - Menu
+	// ==========================================================================
+
+	/**
+	 *	Affiche et gÃ¨re le menu principal.
+	 *
+	 *	@return Choix de l'utilisateur (1, 2 ou 3)
+	 */
+	public int menu_principal() {
+		int resultat = -1;
 		aff("\n   ******* Menu principal ******* \n");
-		while (res!=1 && res!=2 && res!=3) {
+		while (resultat != 1 && resultat != 2 && resultat != 3) {
 			aff("\t1 : Jeu humain");
 			aff("\t2 : Jeu IA (ordinateur contre ordinateur)");
 			aff("\t3 : Quitter");
 			affnn("\n   ");
-			res = entrer_entier("entre 1 et 3");
+			resultat = entrerEntier("entre 1 et 3");
 		}
-		return res;
+		return resultat;
 	}
 
-// ###################### Fonctions du jeu ######################## //
+	// ==========================================================================
+	// Fonctions principales - Positionnement des bateaux
+	// ==========================================================================
 
-// ###******** Fonctions de positionnements des bateaux ********### //
-
-	public int entre_nombre_de_bateaux (int nombre_de_cases_restantes) {
-		int res = -1;
-
-		while (res<1 || res>nombre_de_cases_restantes) {
-			res = entrer_entier_phrase("inférieur ou égal à "+nombre_de_cases_restantes+" et suppérieur à 0");
+	/**
+	 *	Demande le nombre de bateaux au joueur.
+	 *
+	 *	@param nombreCasesRestantes Nombre de cases disponibles
+	 *	@return Nombre de bateaux choisi
+	 */
+	public int entreNombreDeBateaux(int nombreCasesRestantes) {
+		int resultat = -1;
+		while (resultat < 1 || resultat > nombreCasesRestantes) {
+			resultat = entrerEntierPhrase("infÃ©rieur ou Ã©gal Ã  " + nombreCasesRestantes + " et supÃ©rieur Ã  0");
 		}
-		return res;
-	}
-
-	public int entre_nombre_de_case_bateau (int nombre_de_cases_restantes, int nombre_de_bateaux_restants) {
-		int res = -1;
-		int chiffre_a_entrer_inferieur_a = nombre_de_cases_restantes-(nombre_de_bateaux_restants-1);
-		while (res<1 || res>chiffre_a_entrer_inferieur_a) {
-			res = entrer_entier_phrase("inférieur ou égal à "+chiffre_a_entrer_inferieur_a+" et suppérieur à 0");
-		}
-		return res;
+		return resultat;
 	}
 
 	/**
-		Donne les bateaux d'un joueur
-		Chaque case du tableau int[] 
-		contient le nombre du case d'un bateau.
-	**/
-	public int[] entre_nombre_de_case_bateau (int nombre_de_cases_restantes) {
-		int i;
-		int tmp;
-		int [] res;
-		int nombre_de_cases_restantes_tmp = nombre_de_cases_restantes;
-		int nombre_de_bateaux_restants;
+	 *	Demande le nombre de cases d'un bateau au joueur.
+	 *
+	 *	@param nombreCasesRestantes Nombre de cases disponibles
+	 *	@param nombreBateauxRestants Nombre de bateaux restant Ã  placer
+	 *	@return Nombre de cases choisi
+	 */
+	public int entreNombreDeCaseBateau(int nombreCasesRestantes, int nombreBateauxRestants) {
+		int resultat = -1;
+		int maxAutorise = nombreCasesRestantes - (nombreBateauxRestants - 1);
+		while (resultat < 1 || resultat > maxAutorise) {
+			resultat = entrerEntierPhrase("infÃ©rieur ou Ã©gal Ã  " + maxAutorise + " et supÃ©rieur Ã  0");
+		}
+		return resultat;
+	}
 
-		aff("Il vous reste "+nombre_de_cases_restantes+" cases à occuper avec vos bateaux.");
+	/**
+	 *	Demande au joueur de dÃ©finir tous ses bateaux.
+	 *	Chaque Ã©lÃ©ment du tableau contient le nombre de cases d'un bateau.
+	 *
+	 *	@param nombreCasesRestantes Nombre de cases disponibles
+	 *	@return Tableau des tailles de bateaux
+	 */
+	public int[] entre_nombre_de_case_bateau(int nombreCasesRestantes) {
+		int nombreCasesTemp = nombreCasesRestantes;
+		int nombreBateauxRestants;
+
+		aff("Il vous reste " + nombreCasesRestantes + " cases Ã  occuper avec vos bateaux.");
 		aff("Veuillez entrer le nombre de bateaux : ");
-		int nombre_de_bateaux = entre_nombre_de_bateaux(nombre_de_cases_restantes);
-		nombre_de_bateaux_restants = nombre_de_bateaux;
-		res = new int[nombre_de_bateaux];
-		for (i=0; i<nombre_de_bateaux ; i++) {
-			tmp = entre_nombre_de_case_bateau(nombre_de_cases_restantes_tmp, nombre_de_bateaux_restants);
-			res[i] = tmp;
-			nombre_de_cases_restantes_tmp-=tmp;
-			nombre_de_bateaux_restants--;
+		int nombreBateaux = entreNombreDeBateaux(nombreCasesRestantes);
+		nombreBateauxRestants = nombreBateaux;
+
+		int[] resultat = new int[nombreBateaux];
+		for (int index = 0; index < nombreBateaux; index++) {
+			int tailleBateau = entreNombreDeCaseBateau(nombreCasesTemp, nombreBateauxRestants);
+			resultat[index] = tailleBateau;
+			nombreCasesTemp -= tailleBateau;
+			nombreBateauxRestants--;
 		}
-		return res;
+		return resultat;
+	}
+
+	// --------------------------------------------------------------------------
+	// Saisie des cases
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Demande les cases de dÃ©but et fin d'un bateau.
+	 *
+	 *	@param numeroBateau NumÃ©ro du bateau
+	 *	@param nombreCasesBateau Nombre de cases du bateau
+	 *	@param hauteur Hauteur de la grille
+	 *	@return Tableau [ordonnÃ©e1, abscisse1, ordonnÃ©e2, abscisse2]
+	 */
+	public int[] donne_cases_bateau(int numeroBateau, int nombreCasesBateau, int hauteur) {
+		String message = "Entrer la premiÃ¨re case du bateau numÃ©ro " + numeroBateau + " Ã  " + nombreCasesBateau + " case(s) : ";
+		int[] case1 = entreCase(message, numeroBateau, hauteur);
+		message = "Entrer la derniÃ¨re case du bateau numÃ©ro " + numeroBateau + " Ã  " + nombreCasesBateau + " case(s) : ";
+		int[] caseFin = entreCase(message, numeroBateau, hauteur);
+
+		int[] resultat = new int[4];
+		resultat[0] = case1[0];
+		resultat[1] = case1[1];
+		resultat[2] = caseFin[0];
+		resultat[3] = caseFin[1];
+		return resultat;
 	}
 
 	/**
-		Donne la pemière et la dernière case 
-		du bateau.
-		Renvoie un int [] :
-			int[0] : première case, ordonnée
-			int[1] : première case, abscisse
-			int[2] : deuxième case, ordonnée
-			int[3] : deuxième case, abscisse
-	**/
-	public int [] donne_cases_bateau (int numero_du_bateau, int nombre_de_cases_bateau, int hauteur) {
-		String message = "Entrer la première case du bateau numéro "+numero_du_bateau+" à "+nombre_de_cases_bateau+" case(s) : ";
-		int [] case1 = entre_case(message, numero_du_bateau, hauteur);
-		message = "Entrer la dernière case du bateau numéro "+numero_du_bateau+" à "+nombre_de_cases_bateau+" case(s) : ";
-		int [] case_fin = entre_case(message, numero_du_bateau, hauteur);
-		int [] res = new int[4];
-
-		res[0] = case1[0];
-		res[1] = case1[1];
-		res[2] = case_fin[0];
-		res[3] = case_fin[1];
-
-		return res;
-	}
-
-	public int [] entre_case (String message, int numero_du_bateau, int hauteur) {
-		int i = 0;
-		Scanner sc = new Scanner(System.in);
-		u = new Utilitaire();
+	 *	Demande une case au joueur avec validation du format.
+	 *
+	 *	@param message Message Ã  afficher
+	 *	@param numeroBateau NumÃ©ro du bateau concernÃ©
+	 *	@param hauteur Hauteur de la grille
+	 *	@return CoordonnÃ©es [ordonnÃ©e, abscisse]
+	 */
+	public int[] entreCase(String message, int numeroBateau, int hauteur) {
+		int tentative = 0;
+		Scanner scanner = new Scanner(System.in);
+		utilitaire = new Utilitaire();
 		String reponse = "";
+
 		aff(message);
-		while (!u.verifie_format_case(reponse, hauteur)) {
-			if (i>0 && !u.verifie_format_case(reponse, hauteur))
+		while (!utilitaire.verifie_format_case(reponse, hauteur)) {
+			if (tentative > 0 && !utilitaire.verifie_format_case(reponse, hauteur)) {
 				aff("Format de case incorrect");
-			reponse = sc.nextLine();
-			i++;
+			}
+			reponse = scanner.nextLine();
+			tentative++;
 		}
-		return u.convertit_case_en_coordonnee(reponse, hauteur);
+		return utilitaire.convertit_case_en_coordonnee(reponse, hauteur);
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires - Saisie
+	// ==========================================================================
 
-	public int entrer_entier (String precision) {
-		Scanner sc = new Scanner(System.in);
-		u = new Utilitaire();
-		String res = "";
+	/**
+	 *	Demande un entier Ã  l'utilisateur.
+	 *
+	 *	@param precision Message de prÃ©cision sur la valeur attendue
+	 *	@return Entier saisi
+	 */
+	public int entrerEntier(String precision) {
+		Scanner scanner = new Scanner(System.in);
+		utilitaire = new Utilitaire();
+		String saisie = "";
 
 		affnn("? = ");
-		res = sc.nextLine();
-		while (!u.is_integer(res)) {
-			aff("Veuillez entrer en entier "+precision+" : ");
+		saisie = scanner.nextLine();
+		while (!utilitaire.is_integer(saisie)) {
+			aff("Veuillez entrer un entier " + precision + " : ");
 			affnn("? = ");
-			res = sc.nextLine();
+			saisie = scanner.nextLine();
 		}
-		return Integer.parseInt(res);
+		return Integer.parseInt(saisie);
 	}
 
-	public int entrer_entier_phrase (String precision) {
-		Scanner sc = new Scanner(System.in);
-		String res = "";
+	/**
+	 *	Demande un entier Ã  l'utilisateur avec phrase explicative.
+	 *
+	 *	@param precision Message de prÃ©cision
+	 *	@return Entier saisi
+	 */
+	public int entrerEntierPhrase(String precision) {
+		Scanner scanner = new Scanner(System.in);
+		String saisie = "";
 
-		aff("Veuillez entrer en entier "+precision+" : ");
+		aff("Veuillez entrer un entier " + precision + " : ");
 		affnn("? = ");
-		res = sc.nextLine();
-		while (!is_integer(res)) {
-			aff("Veuillez entrer en entier "+precision+" : ");
+		saisie = scanner.nextLine();
+		while (!estEntier(saisie)) {
+			aff("Veuillez entrer un entier " + precision + " : ");
 			affnn("? = ");
-			res = sc.nextLine();
+			saisie = scanner.nextLine();
 		}
-		return Integer.parseInt(res);
+		return Integer.parseInt(saisie);
 	}
 
-	public boolean is_integer (String s0) {
+	/**
+	 *	VÃ©rifie si une chaÃ®ne reprÃ©sente un entier.
+	 *
+	 *	@param chaine ChaÃ®ne Ã  vÃ©rifier
+	 *	@return true si c'est un entier, false sinon
+	 */
+	public boolean estEntier(String chaine) {
 		try {
-			int n1 = Integer.parseInt(s0);
+			Integer.parseInt(chaine);
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception erreur) {
 			return false;
 		}
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	// ==========================================================================
+	// Fonctions utilitaires - Affichage
+	// ==========================================================================
+
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message Ã  afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message Ã  afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }
