@@ -1,0 +1,185 @@
+Reflexion IA procedurale - Bataille navale
+2026-02-27
+
+___
+
+Objectif : creer une IA qui tire de maniere organisee et "ponce" les bateaux trouves.
+
+___
+
+1. Analyse de l'IA actuelle
+
+L'IA actuelle (genere_une_case_aleat) tire completement au hasard parmi les cases non tentees.
+-> Inefficace car ne tient pas compte des informations obtenues (touches precedents).
+
+___
+
+2. Idee de l'IA procedurale
+
+Deux modes de fonctionnement :
+
+MODE RECHERCHE (tir en diagonale)
+- Tirer en diagonale pour couvrir le plateau efficacement
+- Pourquoi diagonale ? Un bateau de taille N occupe N cases alignees
+- En tirant en diagonale tous les 2-3 cases, on maximise les chances de toucher
+- Pattern exemple sur grille 4x4 :
+
+    1   2   3   4
+A   X   .   X   .
+B   .   X   .   X
+C   X   .   X   .
+D   .   X   .   X
+
+-> On couvre tout le plateau avec seulement 8 tirs au lieu de 16
+
+MODE PONCAGE (quand on touche)
+- Des qu'on touche un bateau, on passe en mode "poncage"
+- On tire autour de la case touchee (haut, bas, gauche, droite)
+- Si on retouche, on continue dans cette direction jusqu'a l'eau ou coule
+- Si eau, on essaie l'autre direction
+- On continue jusqu'a ce que le bateau soit coule
+
+___
+
+3. Structure de donnees necessaires
+
+Pour implementer ca, l'IA doit memoriser :
+
+a) mode_actuel : RECHERCHE ou PONCAGE
+b) case_touchee_initiale : premiere case touchee du bateau en cours
+c) direction_actuelle : HAUT, BAS, GAUCHE, DROITE ou INCONNUE
+d) cases_touchees_bateau_en_cours : liste des cases touchees consecutives
+
+___
+
+4. Algorithme MODE RECHERCHE
+
+fonction choisir_case_recherche(plateau_tentees, grille):
+
+    # Pattern diagonale avec espacement de 2
+    pour chaque ligne de 0 a hauteur-1:
+        pour chaque colonne de 0 a largeur-1:
+            si (ligne + colonne) % 2 == 0:  # pattern en damier
+                si case[ligne][colonne] pas encore tentee:
+                    retourner case[ligne][colonne]
+
+    # Si toutes les cases du pattern sont tentees, prendre n'importe quelle case libre
+    retourner premiere_case_non_tentee()
+
+___
+
+5. Algorithme MODE PONCAGE
+
+fonction choisir_case_poncage(case_touchee, direction, plateau_tentees, grille):
+
+    si direction == INCONNUE:
+        # On vient de toucher, on ne sait pas encore l'orientation
+        # Essayer dans l'ordre : DROITE, BAS, GAUCHE, HAUT
+        pour chaque dir dans [DROITE, BAS, GAUCHE, HAUT]:
+            case_adjacente = calculer_adjacente(case_touchee, dir)
+            si case_adjacente est valide et non tentee:
+                retourner case_adjacente
+
+    sinon:
+        # On a deja une direction, continuer dans cette direction
+        case_suivante = calculer_adjacente(derniere_case_touchee, direction)
+        si case_suivante est valide et non tentee:
+            retourner case_suivante
+        sinon:
+            # Bout du bateau ou bord du plateau, inverser direction
+            direction_inverse = inverser(direction)
+            case_suivante = calculer_adjacente(case_touchee_initiale, direction_inverse)
+            si case_suivante est valide et non tentee:
+                retourner case_suivante
+
+    # Si aucune case adjacente valide, revenir en mode recherche
+    # (cas rare : bateau coule mais pas detecte, ou bug)
+    retourner choisir_case_recherche()
+
+___
+
+6. Gestion des transitions
+
+Apres chaque tir :
+
+si resultat == EAU:
+    si mode == PONCAGE:
+        # Essayer autre direction ou revenir en recherche
+        si toutes_directions_essayees():
+            mode = RECHERCHE
+        sinon:
+            changer_direction()
+
+si resultat == TOUCHE:
+    si mode == RECHERCHE:
+        mode = PONCAGE
+        case_touchee_initiale = case_tiree
+        direction = INCONNUE
+    sinon:  # deja en poncage
+        # Confirme la direction actuelle, continuer
+        ajouter case_tiree a cases_touchees_bateau_en_cours
+
+si resultat == COULE:
+    mode = RECHERCHE
+    reinitialiser toutes les variables de poncage
+
+___
+
+7. Fonctions utilitaires necessaires
+
+calculer_adjacente(case, direction):
+    si direction == HAUT: retourner Case(case.ordonnee - 1, case.abscisse)
+    si direction == BAS: retourner Case(case.ordonnee + 1, case.abscisse)
+    si direction == GAUCHE: retourner Case(case.ordonnee, case.abscisse - 1)
+    si direction == DROITE: retourner Case(case.ordonnee, case.abscisse + 1)
+
+est_case_valide(case, grille):
+    retourner case.ordonnee >= 1 et case.ordonnee <= grille.hauteur
+           et case.abscisse >= 1 et case.abscisse <= grille.largeur
+
+inverser_direction(direction):
+    HAUT <-> BAS
+    GAUCHE <-> DROITE
+
+___
+
+8. Implementation - Fichiers a modifier
+
+a) IA.java : ajouter les attributs et methodes de l'IA procedurale
+   - int mode (0 = RECHERCHE, 1 = PONCAGE)
+   - Case case_touchee_initiale
+   - int direction (0 = INCONNUE, 1 = HAUT, 2 = BAS, 3 = GAUCHE, 4 = DROITE)
+   - Case[] cases_touchees_bateau_en_cours
+
+b) Nouvelle methode : genere_une_case_procedurale(Joueur joueurAttaquant, int resultat_dernier_tir)
+   - Remplace genere_une_case_aleat pour l'IA procedurale
+
+c) Joueur.java : modifier tenter_une_case_IA pour passer le resultat du dernier tir
+
+___
+
+9. Ordre d'implementation
+
+1. Ajouter les constantes (MODE_RECHERCHE, MODE_PONCAGE, directions)
+2. Ajouter les attributs d'etat de l'IA
+3. Implementer calculer_adjacente et est_case_valide
+4. Implementer choisir_case_recherche (pattern diagonale)
+5. Implementer choisir_case_poncage
+6. Implementer la gestion des transitions
+7. Integrer dans tenter_une_case_IA
+8. Tester
+
+___
+
+10. Cas limites a gerer
+
+- Bateau colle au bord du plateau (certaines directions impossibles)
+- Deux bateaux colles (rare si distance de securite au placement)
+- Toutes les cases du pattern diagonale deja tentees
+- Bateau de taille 1 (pas de direction, coule direct)
+
+___
+
+Conclusion : L'IA procedurale est plus complexe que l'IA aleatoire mais bien plus efficace.
+Le principe est simple : organiser la recherche + exploiter les informations obtenues.
+La complexite vient de la gestion des etats et des cas limites.
