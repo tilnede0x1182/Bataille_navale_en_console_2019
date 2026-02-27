@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bataille Navale</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<!-- ================================================================== -->
+	<!-- Conteneur principal -->
+	<!-- ================================================================== -->
+	<div class="conteneur-principal">
+
+		<!-- ============================================================== -->
+		<!-- En-tete -->
+		<!-- ============================================================== -->
+		<header class="entete">
+			<h1 class="titre-jeu">Bataille Navale</h1>
+		</header>
+
+		<!-- ============================================================== -->
+		<!-- Zone de jeu -->
+		<!-- ============================================================== -->
+		<main class="zone-jeu">
+
+			<!-- Grille du joueur -->
+			<section class="section-grille">
+				<h2 class="titre-grille">Votre flotte</h2>
+				<div id="grille-joueur" class="grille"></div>
+			</section>
+
+			<!-- Grille adversaire -->
+			<section class="section-grille">
+				<h2 class="titre-grille">Flotte adverse</h2>
+				<div id="grille-adversaire" class="grille"></div>
+			</section>
+
+		</main>
+
+		<!-- ============================================================== -->
+		<!-- Zone de controles -->
+		<!-- ============================================================== -->
+		<aside class="zone-controles">
+			<div class="panneau-info">
+				<p id="message-statut" class="message-statut">Placez vos bateaux</p>
+			</div>
+			<div class="panneau-boutons">
+				<button id="bouton-nouvelle-partie" class="bouton bouton-principal">
+					Nouvelle partie
+				</button>
+			</div>
+		</aside>
+
+		<!-- ============================================================== -->
+		<!-- Pied de page -->
+		<!-- ============================================================== -->
+		<footer class="pied-page">
+			<p>Bataille Navale Web - 2025</p>
+		</footer>
+
+	</div>
+
+	<script src="app.js"></script>
+</body>
+</html>

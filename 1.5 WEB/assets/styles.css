@@ -1,0 +1,217 @@
+/* ============================================================================
+   Styles Bataille Navale - Frutiger Aero
+   ============================================================================ */
+
+:root {
+	--couleur-fond-debut: #87CEEB;
+	--couleur-fond-fin: #FFFFFF;
+	--couleur-verre: rgba(255, 255, 255, 0.25);
+	--couleur-verre-bordure: rgba(255, 255, 255, 0.4);
+	--couleur-texte: #1a3a52;
+	--couleur-texte-clair: #4a6a82;
+	--couleur-accent: #0077be;
+	--couleur-eau: #3498db;
+	--couleur-touche: #e74c3c;
+	--couleur-coule: #2c3e50;
+	--couleur-bateau: linear-gradient(145deg, #607d8b, #455a64);
+	--ombre-douce: 0 8px 32px rgba(0, 0, 0, 0.1);
+	--ombre-verre: 0 4px 16px rgba(0, 0, 0, 0.08);
+	--rayon-bordure: 16px;
+	--rayon-case: 8px;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+	background: linear-gradient(180deg, var(--couleur-fond-debut), var(--couleur-fond-fin));
+	min-height: 100vh;
+	color: var(--couleur-texte);
+}
+
+.conteneur-principal {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	min-height: 100vh;
+}
+
+.entete {
+	text-align: center;
+}
+
+.titre-jeu {
+	font-size: 3rem;
+	font-weight: 700;
+	color: var(--couleur-texte);
+	text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.1);
+	letter-spacing: 2px;
+}
+
+.zone-jeu {
+	display: flex;
+	justify-content: center;
+	gap: 3rem;
+	flex-wrap: wrap;
+}
+
+.section-grille {
+	background: var(--couleur-verre);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--couleur-verre-bordure);
+	border-radius: var(--rayon-bordure);
+	padding: 1.5rem;
+	box-shadow: var(--ombre-verre);
+}
+
+.titre-grille {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--couleur-texte);
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+.grille {
+	display: grid;
+	grid-template-columns: repeat(4, 60px);
+	grid-template-rows: repeat(4, 60px);
+	gap: 4px;
+	background: rgba(255, 255, 255, 0.3);
+	padding: 8px;
+	border-radius: var(--rayon-case);
+}
+
+.case {
+	width: 60px;
+	height: 60px;
+	background: linear-gradient(145deg, #ffffff, #e6e6e6);
+	border-radius: var(--rayon-case);
+	box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8),
+	            inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+	            0 2px 4px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.case:hover {
+	transform: translateY(-2px);
+	box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8),
+	            inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+	            0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.case--bateau {
+	background: var(--couleur-bateau);
+	box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3),
+	            inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+	            0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.case--eau {
+	background: radial-gradient(circle, var(--couleur-eau) 30%, transparent 70%);
+}
+
+.case--touche {
+	background: radial-gradient(circle, var(--couleur-touche) 40%, #c0392b 100%);
+	animation: shake 0.4s ease-out;
+}
+
+.case--coule {
+	background: var(--couleur-coule);
+	animation: sink 0.8s ease-out;
+}
+
+@keyframes ripple {
+	0% { width: 10px; height: 10px; opacity: 1; }
+	100% { width: 50px; height: 50px; opacity: 0; }
+}
+
+@keyframes shake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-4px); }
+	40% { transform: translateX(4px); }
+	60% { transform: translateX(-4px); }
+	80% { transform: translateX(4px); }
+}
+
+@keyframes sink {
+	0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+	50% { transform: translateY(5px) rotate(5deg); }
+	100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+}
+
+.zone-controles {
+	display: flex;
+	justify-content: center;
+	gap: 2rem;
+	flex-wrap: wrap;
+}
+
+.panneau-info {
+	background: var(--couleur-verre);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--couleur-verre-bordure);
+	border-radius: var(--rayon-bordure);
+	padding: 1rem 2rem;
+	box-shadow: var(--ombre-verre);
+}
+
+.message-statut {
+	font-size: 1.1rem;
+	color: var(--couleur-texte);
+	font-weight: 500;
+}
+
+.panneau-boutons {
+	display: flex;
+	gap: 1rem;
+}
+
+.bouton {
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 600;
+	border: none;
+	border-radius: var(--rayon-case);
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bouton-principal {
+	background: linear-gradient(145deg, var(--couleur-accent), #005a8c);
+	color: white;
+	box-shadow: 0 4px 8px rgba(0, 119, 190, 0.3),
+	            inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.bouton-principal:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 12px rgba(0, 119, 190, 0.4),
+	            inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.bouton-principal:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 119, 190, 0.3),
+	            inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pied-page {
+	text-align: center;
+	color: var(--couleur-texte-clair);
+	font-size: 0.9rem;
+	margin-top: auto;
+	padding-top: 1rem;
+}

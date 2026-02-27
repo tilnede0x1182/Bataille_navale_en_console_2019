@@ -1,0 +1,97 @@
+Bataille navale Web - Decisions du projet
+=========================================
+
+1. Stack technique : JS vanilla (ES6+), CSS pur, pas de framework
+2. Architecture : client-serveur (Node.js backend optionnel pour multijoueur)
+3. Esthetique : Frutiger Aero (glossy, reflets, degrades, ombres douces)
+4. Grille : 4x4 par defaut (comme Java), taille configurable
+5. Bateaux : CSS pur avec border-radius, box-shadow, linear-gradient
+6. Animations : CSS @keyframes pour tirs (splash eau, explosion touche, naufrage coule)
+7. IA : port direct de IA_procedurale.java (mode RECHERCHE diagonale + PONCAGE)
+8. Structure : index.html, style.css, app.js (point entree), modules/ pour classes
+9. Sans assets externes : tout en CSS (formes, icones, effets)
+10. Section 36 respectee : fonctions <=15 lignes, nommage explicite, sections commentees
+11. Port détemrin en varbale sglobal en hau du ficheir; por hcoisi -> 4511, pas de .env
+12. ajoute run dectio du oport occupé et un lmesge de ce type (emoji crois) Le port $port est déjà occurpé. puis exuctio en system (1)
+14. (emoji fusée )Server lancé sur le port $port lors que lseveur se lance
+___
+
+Choix techniques :
+
+
+Architecture fichiers
+---------------------
+1.5 WEB/
+├── server.js           # Serveur Node.js (point d'entree backend)
+├── Makefile            # Commandes : make run, make dev
+├── assets/
+│   └── index/
+│       ├── index.html  # Page principale
+│       ├── style.css   # Styles Frutiger Aero
+│       └── app.js      # Logique frontend (point d'entree)
+└── Reflexion/
+    └── Reflexion_creation_projet_web.txt
+
+
+Classes JS (port du Java)
+-------------------------
+- Grille : dimensions (hauteur, largeur)
+- Case : coordonnees (ordonnee, abscisse), etat (attaquee, coulee)
+- Bateau : tableau de cases, etat (touche, coule)
+- Joueur : plateau, bateaux, cases_tentees, IA_humain
+- IA_procedurale : mode (RECHERCHE/PONCAGE), direction, cases_touchees
+
+
+Etats d'une case (affichage)
+----------------------------
+- -1 : non tentee (vide)
+-  0 : eau (tir rate)
+-  1 : touche (tir reussi)
+-  2 : coule (bateau entierement detruit)
+
+
+Animations CSS prevues
+----------------------
+- Tir dans l'eau : cercles concentriques (ripple effect)
+- Tir touche : flash rouge + secousse
+- Bateau coule : rotation + descente + fade out
+
+
+Style Frutiger Aero
+-------------------
+- Fond : degrade bleu ciel vers blanc
+- Grille : effet verre (glassmorphism), bordures arrondies
+- Cases : ombres douces, reflets subtils
+- Bateaux : degrade metallique, ombre portee
+- Boutons : effet 3D, hover avec brillance
+
+___
+
+Taches restantes
+----------------
+
+1. Bug 404 : le serveur ne trouve pas les fichiers
+   - Verifier le chemin assets/ dans server.js
+   - Ajouter des logs sur chaque requete (URL demandee, chemin resolu, existe ou non)
+
+2. Choix du nombre de cases (taille grille)
+   - Ajouter un menu/formulaire avant le jeu
+   - Inputs : hauteur et largeur (min 4, max 10)
+   - Bouton "Commencer" qui lance la partie avec ces dimensions
+
+3. Placement des bateaux par le joueur
+   - Phase de placement avant le jeu
+   - Clic sur case de depart + clic sur case de fin
+   - Validation : alignement horizontal ou vertical, pas de chevauchement
+   - Affichage visuel des bateaux places (classe CSS case--bateau)
+   - Bouton "Valider placement" quand tous les bateaux sont places
+
+4. IA procedurale (port de IA_procedurale.java)
+   - Mode RECHERCHE : tir en diagonale (cases ou (ligne + colonne) % 2 == 0)
+   - Mode PONCAGE : apres un touche, explorer les 4 directions
+   - Transitions : touche -> poncage, coule -> recherche
+   - Variables : case_touchee_initiale, direction_actuelle, directions_essayees[]
+
+5. Logs detailles partout
+   - server.js : chaque requete (methode, URL, chemin, status)
+   - app.js : chaque action (init, clic, tir, resultat, changement etat)
