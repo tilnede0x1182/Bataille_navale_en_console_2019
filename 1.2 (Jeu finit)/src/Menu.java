@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 class Menu {
+	private static final Scanner INPUT = new Scanner(System.in);
 	Utilitaire utilitaire;
 	Case case_1;
 
@@ -14,7 +15,7 @@ class Menu {
 		aff("\n   ******* Menu principal ******* \n");
 		while (res!=1 && res!=2 && res!=3) {
 			aff("\t1 : Jouer");
-			aff("\t2 : Jouer à plus de deux joueurs");
+			aff("\t2 : Jouer Ã  plus de deux joueurs");
 			aff("\t3 : Quitter");
 			affnn("\n   ");
 			res = entrer_entier("entre 1 et 3");
@@ -31,8 +32,8 @@ class Menu {
 		aff("\n   ******* Menu joueur 2 ******* \n");
 		aff("Le joueur "+numero_du_joueur+" doit :");
 		while (res!=1 && res!=2) {
-			aff("\t1 : Placer ses bateau soi-même");
-			aff("\t2 : Placer ses bateau aléatoirement");
+			aff("\t1 : Placer ses bateau soi-mÃªme");
+			aff("\t2 : Placer ses bateau alÃ©atoirement");
 			affnn("\n   ");
 			res = entrer_entier("entre 1 et 2");
 		}
@@ -62,7 +63,7 @@ class Menu {
 		int res = -1;
 		aff("\nEntrer le nombre de joueurs :");
 		while (res<2) {
-			res = entrer_entier(" suppérieur à ou égal 2");
+			res = entrer_entier(" suppÃ©rieur Ã  ou Ã©gal 2");
 		}
 		return res;
 	}
@@ -72,7 +73,7 @@ class Menu {
 
 		while (res<1 || res>nombre_de_cases_restantes) {
 			aff("Veuillez entrer le nombre de bateaux :");
-			res = entrer_entier_phrase("inférieur ou égal à "+nombre_de_cases_restantes+" et suppérieur à 0");
+			res = entrer_entier_phrase("infÃ©rieur ou Ã©gal Ã  "+nombre_de_cases_restantes+" et suppÃ©rieur Ã  0");
 		}
 		return res;
 	}
@@ -85,7 +86,7 @@ class Menu {
 				nombre_de_cases_restantes-(nombre_de_bateaux_restants-1));
 		while (res<1 || res>chiffre_a_entrer_inferieur_a) {
 			aff("Entrer le nombre de cases du bateau "+numero_du_bateau+" : ");
-			res = entrer_entier_phrase("inférieur ou égal à "+chiffre_a_entrer_inferieur_a+" et suppérieur à 0");
+			res = entrer_entier_phrase("infÃ©rieur ou Ã©gal Ã  "+chiffre_a_entrer_inferieur_a+" et suppÃ©rieur Ã  0");
 		}
 		return res;
 	}
@@ -102,7 +103,7 @@ class Menu {
 		int nombre_de_cases_restantes_tmp = nombre_de_cases_restantes;
 		int nombre_de_bateaux_restants;
 
-		aff("Il vous reste "+nombre_de_cases_restantes+" cases à occuper avec vos bateaux.");
+		aff("Il vous reste "+nombre_de_cases_restantes+" cases Ã  occuper avec vos bateaux.");
 		int nombre_de_bateaux = entre_nombre_de_bateaux(nombre_de_cases_restantes);
 		nombre_de_bateaux_restants = nombre_de_bateaux;
 		res = new int[nombre_de_bateaux];
@@ -116,18 +117,18 @@ class Menu {
 	}
 
 	/**
-		Donne la pemière et la dernière case 
+		Donne la pemiÃ¨re et la derniÃ¨re case 
 		du bateau.
 		Renvoie un int [] :
-			int[0] : première case, ordonnée
-			int[1] : première case, abscisse
-			int[2] : deuxième case, ordonnée
-			int[3] : deuxième case, abscisse
+			int[0] : premiÃ¨re case, ordonnÃ©e
+			int[1] : premiÃ¨re case, abscisse
+			int[2] : deuxiÃ¨me case, ordonnÃ©e
+			int[3] : deuxiÃ¨me case, abscisse
 	**/
 	public int [] donne_cases_bateau (Grille grille, int numero_du_bateau, int nombre_de_cases_bateau) {
-		String message = "Entrer la première case du bateau numéro "+numero_du_bateau+" à "+nombre_de_cases_bateau+" case(s) : ";
+		String message = "Entrer la premiÃ¨re case du bateau numÃ©ro "+numero_du_bateau+" Ã  "+nombre_de_cases_bateau+" case(s) : ";
 		int [] case1 = entre_case(grille, message);
-		message = "Entrer la dernière case du bateau numéro "+numero_du_bateau+" à "+nombre_de_cases_bateau+" case(s) : ";
+		message = "Entrer la derniÃ¨re case du bateau numÃ©ro "+numero_du_bateau+" Ã  "+nombre_de_cases_bateau+" case(s) : ";
 		int [] case_fin = entre_case(grille, message);
 		int [] res = new int[4];
 
@@ -141,13 +142,12 @@ class Menu {
 
 	public int [] entre_case (Grille grille, String message) {
 		int i = 0;
-		Scanner sc = new Scanner(System.in);
 		String reponse = "";
 		affnn(message+"\n? = ");
 		while (!case_1.verifie_case_existe(grille, reponse)) {
 			if (i>0 && !case_1.verifie_case_existe(grille, reponse))
 				affnn("Format de case incorrect\n? = ");
-			reponse = sc.nextLine();
+			reponse = INPUT.nextLine();
 			i++;
 		}
 		return case_1.convertit_case_en_coordonnee(grille, reponse);
@@ -156,30 +156,28 @@ class Menu {
 // ################### Fonctions utilitaires ###################### //
 
 	public int entrer_entier (String precision) {
-		Scanner sc = new Scanner(System.in);
 		String res = "";
 
 		affnn("? = ");
-		res = sc.nextLine();
+		res = INPUT.nextLine();
 		while (!is_integer(res)) {
 			aff("Veuillez entrer en entier "+precision+" : ");
 			affnn("? = ");
-			res = sc.nextLine();
+			res = INPUT.nextLine();
 		}
 		return Integer.parseInt(res);
 	}
 
 	public int entrer_entier_phrase (String precision) {
-		Scanner sc = new Scanner(System.in);
 		String res = "";
 
 		aff("Veuillez entrer en entier "+precision+" : ");
 		affnn("? = ");
-		res = sc.nextLine();
+		res = INPUT.nextLine();
 		while (!is_integer(res)) {
 			aff("Veuillez entrer en entier "+precision+" : ");
 			affnn("? = ");
-			res = sc.nextLine();
+			res = INPUT.nextLine();
 		}
 		return Integer.parseInt(res);
 	}

@@ -63,6 +63,7 @@ class Jeu {
 		int i, j;
 		int gagnant;
 		int nombre_de_joueurs_ayant_perdu = 0;
+		boolean [] joueurElimine = new boolean[nombre_de_joueurs];
 		boolean impossible_de_tenter_une_case = false;
 		boolean fin_du_jeu = false;
 
@@ -81,14 +82,18 @@ class Jeu {
 						//joueurs[j].affiche_status_bateaux();
 						utilitaire.afficher_evenement_coup(joueurs[j].derniere_case_tentee);
 						affichage.afficher_carte_joueur (grille, joueurs[j]);
-						if (impossible_de_tenter_une_case) {
-							joueurs[i].perd();
-						}
-						if (joueurs[j].a_perdu()) {
-							//aff("\nLe joueur "+(j+1)+" a perdu !\n");
+					if (impossible_de_tenter_une_case) {
+						joueurs[i].perd();
+						if (!joueurElimine[i]) {
+							joueurElimine[i] = true;
 							nombre_de_joueurs_ayant_perdu++;
 						}
-						// Vérifie si le jeu est terminé
+					}
+					if (joueurs[j].a_perdu() && !joueurElimine[j]) {
+						joueurElimine[j] = true;
+						nombre_de_joueurs_ayant_perdu++;
+					}
+						// VÃ©rifie si le jeu est terminÃ©
 						if (nombre_de_joueurs_ayant_perdu==nombre_de_joueurs-1 
 									|| impossible_de_tenter_une_case) {
 							aff("\nFin du jeu");
@@ -108,7 +113,7 @@ class Jeu {
 			joueurs[i].affiche_plateau_attaquant(joueurs[i]);
 		}
 			
-		// Affichage des cartes des joueurs à la fin du jeu
+		// Affichage des cartes des joueurs Ã  la fin du jeu
 		for (i=0; i<nombre_de_joueurs; i++) {
 			joueurs[i].carte_a_montrer = true;
 			affichage.afficher_carte_joueur(grille, joueurs[i]);

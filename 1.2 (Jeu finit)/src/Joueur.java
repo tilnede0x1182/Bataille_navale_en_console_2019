@@ -32,10 +32,10 @@ class Joueur {
 
 	public void constructeur (Grille grille, int numero_du_joueur, boolean IA_humain, boolean carte_a_montrer) {
 		/**
-			-1 : Pas de dernière case tentée
+			-1 : Pas de derniÃ¨re case tentÃ©e
 			 0 : dans l'eau
-			 1 : touché
-			 2 : coulé
+			 1 : touchÃ©
+			 2 : coulÃ©
 		**/
 		this.IA_humain = IA_humain;
 		this.carte_a_montrer = carte_a_montrer;
@@ -79,8 +79,8 @@ class Joueur {
 	/**
 		Renvoie un int :
 		0 : dans l'eau
-		1 : touché
-		2 : coulé
+		1 : touchÃ©
+		2 : coulÃ©
 	**/
 	public int attaquer_une_case (Case case_attaquee) {
 		int i;
@@ -138,7 +138,7 @@ class Joueur {
 				cases_occupees = utilitaire.cases_occuppees(this);
 				if (!case_tmp.contient_case(cases_occupees, bateau_tmp2.cases)) ok=true;
 				if (!ok)
-					aff("Il y a déjà un bateau placé là");
+					aff("Il y a dÃ©jÃ  un bateau placÃ© lÃ ");
 				bateaux[i] = bateau_tmp2;
 			}
 			cases_occupees = utilitaire.cases_occuppees(this);
@@ -165,7 +165,7 @@ class Joueur {
 		IA ia_tmp = new IA(grille);
 		if (carte_a_montrer) affiche_plateau_attaquant(this);
 		Case case_tentee = new Case(-1, -1);
-		// Vérifie s'il reste des cases à tenter sur le plateau.
+		// VÃ©rifie s'il reste des cases Ã  tenter sur le plateau.
 		if (cases_a_tenter()) {
 			case_tentee = ia_tmp.genere_une_case_aleat(this);
 			aff("Joueur "+this.numero_du_joueur+" : ");
@@ -176,7 +176,7 @@ class Joueur {
 			return true;
 		}
 		else {
-			aff("Joueur "+numero_du_joueur+", tenter_une_case : toutes les cases du plateau ont été tentées");
+			aff("Joueur "+numero_du_joueur+", tenter_une_case : toutes les cases du plateau ont Ã©tÃ© tentÃ©es");
 			return false;
 		}
 	}
@@ -188,31 +188,31 @@ class Joueur {
 		boolean case_en_double = false;
 		Case case_tentee = new Case(-1, -1);
 		if (carte_a_montrer) affiche_plateau_attaquant(this);
-		// Vérifie s'il reste des cases à tenter sur le plateau.
+		// VÃ©rifie s'il reste des cases Ã  tenter sur le plateau.
 		if (cases_a_tenter()) {
 			case_en_double = true;
 			while (case_en_double) {
-				tmp = menu.entre_case(grille, "Joueur "+numero_du_joueur+" : \nEntrer la case à jouer");
+				tmp = menu.entre_case(grille, "Joueur "+numero_du_joueur+" : \nEntrer la case Ã  jouer");
 				case_tentee = new Case(tmp[0], tmp[1]);
 				if (!utilitaire.verifie_case_tentee(this.cases_tentees, cases_tentees_indice, case_tentee)) {
 					case_en_double = true;
-					aff("Attention, la case "+case_tentee.case_format_ecrit()+" a déjà été tentée.");
+					aff("Attention, la case "+case_tentee.case_format_ecrit()+" a dÃ©jÃ  Ã©tÃ© tentÃ©e.");
 					aff("Veuillez entrer une autre case :");
 				}
 				else case_en_double = false;
 			}
 			etat_case = joueur_attaque.attaquer_une_case(case_tentee);
-			ajoute_une_case_tentee(joueur_attaque, case_tentee, etat_case);
+			ajoute_une_case_tentee(this, case_tentee, etat_case);
 			return true;
 		}
 		else {
-			aff("Joueur "+numero_du_joueur+", tenter_une_case : toutes les cases du plateau ont été tentées");
+			aff("Joueur "+numero_du_joueur+", tenter_une_case : toutes les cases du plateau ont Ã©tÃ© tentÃ©es");
 			return false;
 		}
 	}
 
 	/**
-		Met à jour les bateaux coulés sur le plateau
+		Met Ã  jour les bateaux coulÃ©s sur le plateau
 	**/
 	public void met_a_jour_plateau_coule () {
 		int i, j;
@@ -248,8 +248,8 @@ class Joueur {
 	}
 
 	/**
-		0 : case non-tentée
-		1 : case tentée
+		0 : case non-tentÃ©e
+		1 : case tentÃ©e
 	**/
 	public int [][] construit_plateau_cases_tentees () {
 		int i, j;
@@ -268,7 +268,7 @@ class Joueur {
 			}
 		}
 
-		// On met les cases tentées dans le plateau
+		// On met les cases tentÃ©es dans le plateau
 		for (i=0; i<cases_tentees_indice; i++) {
 			ordonnee = cases_tentees[i].ordonnee-1;
 			abscisse = cases_tentees[i].abscisse-1;
@@ -302,8 +302,8 @@ class Joueur {
 	}
 
 	/**
-		Met à jour les cases coulée dans les cases tentées 
-		pour l'affichage de la carte des cases tentées
+		Met Ã  jour les cases coulÃ©e dans les cases tentÃ©es 
+		pour l'affichage de la carte des cases tentÃ©es
 	**/
 	public void met_a_jour_cases_coulees (Joueur joueur_attaque) {
 		int i, j;
@@ -323,7 +323,7 @@ class Joueur {
 // ################### Fonctions utilitaires ###################### //
 
 	/**
-		Retourne true s'il reste des cases à tenter
+		Retourne true s'il reste des cases Ã  tenter
 		false sinon.
 	**/
 	public boolean cases_a_tenter () {
