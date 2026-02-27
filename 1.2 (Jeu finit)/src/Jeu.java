@@ -33,14 +33,34 @@ class Jeu {
 	public Jeu(int hauteur, int largeur, int nombreJoueurs) {
 		initialiserComposants(hauteur, largeur);
 		int choix = menu.menu_principal();
-		if (choix == 2) {
-			nombreJoueurs = menu.entre_nombre_de_joueurs();
-		}
-		initialisation_du_jeu(nombreJoueurs);
-		jeu(nombreJoueurs);
-		if (choix == 3) {
+		traiterChoixMenuPrincipal(choix, nombreJoueurs);
+	}
+
+	/**
+	 *	Traite le choix du menu principal.
+	 *
+	 *	@param choix Choix de l'utilisateur (1, 2 ou 3)
+	 *	@param nombreJoueurs Nombre de joueurs par defaut
+	 */
+	private void traiterChoixMenuPrincipal(int choix, int nombreJoueurs) {
+		if (choix == 1) {
+			lancerPartie(nombreJoueurs);
+		} else if (choix == 2) {
+			int nombreJoueursChoisi = menu.entre_nombre_de_joueurs();
+			lancerPartie(nombreJoueursChoisi);
+		} else if (choix == 3) {
 			System.exit(0);
 		}
+	}
+
+	/**
+	 *	Lance une partie avec le nombre de joueurs specifie.
+	 *
+	 *	@param nombreJoueurs Nombre de joueurs
+	 */
+	private void lancerPartie(int nombreJoueurs) {
+		initialisation_du_jeu(nombreJoueurs);
+		jeu(nombreJoueurs);
 	}
 
 	/**
