@@ -1,27 +1,56 @@
+// ==============================================================================
+// Classe Grille
+// ==============================================================================
 
+/**
+ *	Représente la grille de jeu (dimensions uniquement).
+ */
 class Grille {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
 	public int hauteur;
 	public int largeur;
 
-	public Grille (int hauteur, int largeur) {
-		this.hauteur = hauteur;
-		this.largeur = largeur;
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
+
+	/**
+	 *	Constructeur de la grille.
+	 *
+	 *	@param hauteurGrille Hauteur de la grille
+	 *	@param largeurGrille Largeur de la grille
+	 */
+	public Grille(int hauteurGrille, int largeurGrille) {
+		this.hauteur = hauteurGrille;
+		this.largeur = largeurGrille;
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
 
-	public String toString () {
-		String res = "";
-		res+="Hauteur = "+hauteur+"\n";
-		res+="Largeur = "+largeur+"\n";
-		return res;
+	/**
+	 *	Représentation textuelle de la grille.
+	 */
+	public String toString() {
+		return "Hauteur = " + hauteur + "\nLargeur = " + largeur + "\n";
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
 }

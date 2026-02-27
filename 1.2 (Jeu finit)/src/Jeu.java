@@ -1,138 +1,253 @@
+// ==============================================================================
+// Classe Jeu
+// ==============================================================================
+
+/**
+ *	Classe principale du jeu de bataille navale.
+ *	Gère le déroulement complet d'une partie.
+ */
 class Jeu {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
 	Menu menu;
 	Affichage affichage;
 	Utilitaire utilitaire;
 	Grille grille;
-	Joueur [] joueurs;
+	Joueur[] joueurs;
 	IA ia;
 
-	public Jeu (int hauteur, int largeur, int nombre_de_joueurs) {
-		int choix = 1;
+	// ==========================================================================
+	// Constructeur
+	// ==========================================================================
+
+	/**
+	 *	Constructeur du jeu.
+	 *
+	 *	@param hauteur Hauteur de la grille
+	 *	@param largeur Largeur de la grille
+	 *	@param nombreJoueurs Nombre de joueurs
+	 */
+	public Jeu(int hauteur, int largeur, int nombreJoueurs) {
+		initialiserComposants(hauteur, largeur);
+		int choix = menu.menu_principal();
+		if (choix == 2) {
+			nombreJoueurs = menu.entre_nombre_de_joueurs();
+		}
+		initialisation_du_jeu(nombreJoueurs);
+		jeu(nombreJoueurs);
+		if (choix == 3) {
+			System.exit(0);
+		}
+	}
+
+	/**
+	 *	Initialise les composants du jeu.
+	 */
+	private void initialiserComposants(int hauteur, int largeur) {
 		menu = new Menu();
 		affichage = new Affichage();
 		utilitaire = new Utilitaire();
 		grille = new Grille(hauteur, largeur);
 		ia = new IA(grille);
-
-		choix = menu.menu_principal();
-		//choix = 1;
-		if (choix==2)
-			nombre_de_joueurs = menu.entre_nombre_de_joueurs();
-		initialisation_du_jeu(nombre_de_joueurs);
-		jeu(nombre_de_joueurs);
-		// Le joueur a choisi de quitter le jeu
-		if (choix==3) System.exit(0);
 	}
 
-	public void initialisation_du_jeu (int nombre_de_joueurs) {
-		int i, q=0;
-		boolean joueur_IA_humain;
-		boolean carte_a_montrer;
-		boolean placement_auto_humain = false;
-		
+	// ==========================================================================
+	// Fonctions principales - Initialisation
+	// ==========================================================================
 
-		joueurs = new Joueur[nombre_de_joueurs];
-		for (i=0; i<nombre_de_joueurs; i++) {
-			joueur_IA_humain = menu.IA_humain((i+1));
-			carte_a_montrer = !joueur_IA_humain;
-			//joueur_IA_humain = true;
-			//if (!joueur_IA_humain)
-			//	q = menu.menu_positionnement_bateaux_1((i+1));
-			//else q = 2;
-			q = 2;
-			if (q==2) placement_auto_humain = true;
-			joueurs[i] = placement_bateaux ((i+1), placement_auto_humain, joueur_IA_humain, carte_a_montrer);
-			affichage.afficher_carte_joueur(grille, joueurs[i]);
+	/**
+	 *	Initialise le jeu avec tous les joueurs.
+	 *
+	 *	@param nombreJoueurs Nombre de joueurs
+	 */
+	public void initialisation_du_jeu(int nombreJoueurs) {
+		joueurs = new Joueur[nombreJoueurs];
+		for (int index = 0; index < nombreJoueurs; index++) {
+			joueurs[index] = initialiserJoueur(index + 1);
+			affichage.afficherCarteJoueur(grille, joueurs[index]);
 		}
 	}
 
 	/**
-		placement_auto_humain :
-			True : automatique
-			False : humain
-	**/
-	public Joueur placement_bateaux (int numero_du_joueur, boolean placement_auto_humain, boolean IA_humain, boolean carte_a_montrer) {
-		Joueur res;
-		if (!placement_auto_humain)
-			res = new Joueur(numero_du_joueur, grille, IA_humain, carte_a_montrer);
-		else res = ia.place_bateaux_IA(grille, numero_du_joueur, IA_humain, carte_a_montrer);
-		return res;
+	 *	Initialise un joueur.
+	 */
+	private Joueur initialiserJoueur(int numeroJoueur) {
+		boolean estIA = menu.IA_humain(numeroJoueur);
+		boolean carteAMontrer = !estIA;
+		boolean placementAuto = true;
+		return placement_bateaux(numeroJoueur, placementAuto, estIA, carteAMontrer);
 	}
 
-	public void jeu (int nombre_de_joueurs) {
-		int i, j;
-		int gagnant;
-		int nombre_de_joueurs_ayant_perdu = 0;
-		boolean [] joueurElimine = new boolean[nombre_de_joueurs];
-		boolean impossible_de_tenter_une_case = false;
-		boolean fin_du_jeu = false;
+	/**
+	 *	Place les bateaux d'un joueur.
+	 */
+	public Joueur placement_bateaux(int numeroJoueur, boolean placementAuto, boolean estIA, boolean carteAMontrer) {
+		if (!placementAuto) {
+			return new Joueur(numeroJoueur, grille, estIA, carteAMontrer);
+		}
+		return ia.place_bateaux_IA(grille, numeroJoueur, estIA, carteAMontrer);
+	}
 
-		while (!fin_du_jeu) {
-			for (i=0; i<nombre_de_joueurs; i++) {
-				for (j=0; j<nombre_de_joueurs; j++) {
-					if (i!=j && !fin_du_jeu) {
-						// IA
-						if (joueurs[i].IA_humain) {
-							impossible_de_tenter_une_case = (!joueurs[i].tenter_une_case_IA(joueurs[j]));
-						}
-						// Humain
-						else {
-							impossible_de_tenter_une_case = (!joueurs[i].tenter_une_case(joueurs[j]));
-						}
-						//joueurs[j].affiche_status_bateaux();
-						utilitaire.afficher_evenement_coup(joueurs[j].derniere_case_tentee);
-						affichage.afficher_carte_joueur (grille, joueurs[j]);
-					if (impossible_de_tenter_une_case) {
-						joueurs[i].perd();
-						if (!joueurElimine[i]) {
-							joueurElimine[i] = true;
-							nombre_de_joueurs_ayant_perdu++;
-						}
-					}
-					if (joueurs[j].a_perdu() && !joueurElimine[j]) {
-						joueurElimine[j] = true;
-						nombre_de_joueurs_ayant_perdu++;
-					}
-						// Vérifie si le jeu est terminé
-						if (nombre_de_joueurs_ayant_perdu==nombre_de_joueurs-1 
-									|| impossible_de_tenter_une_case) {
-							aff("\nFin du jeu");
-							gagnant = utilitaire.recherche_gagnant (this.joueurs)+1;
-							if (gagnant>0)
-								aff("\nLe gagnant est le joueur "+gagnant+".\n");
-							else
-								aff("\nIl n'y a aucun gagnant.\n");
-							fin_du_jeu = true;
-						}
+	// ==========================================================================
+	// Fonctions principales - Boucle de jeu
+	// ==========================================================================
+
+	/**
+	 *	Lance la boucle principale du jeu.
+	 */
+	public void jeu(int nombreJoueurs) {
+		int nombreJoueursAyantPerdu = 0;
+		boolean[] joueurElimine = new boolean[nombreJoueurs];
+		boolean finDuJeu = false;
+
+		while (!finDuJeu) {
+			finDuJeu = executerTour(nombreJoueurs, joueurElimine);
+		}
+		afficherResultatsFinaux(nombreJoueurs);
+	}
+
+	/**
+	 *	Exécute un tour de jeu complet.
+	 */
+	private boolean executerTour(int nombreJoueurs, boolean[] joueurElimine) {
+		for (int indexAttaquant = 0; indexAttaquant < nombreJoueurs; indexAttaquant++) {
+			for (int indexCible = 0; indexCible < nombreJoueurs; indexCible++) {
+				if (indexAttaquant != indexCible) {
+					boolean finPartie = executerAttaque(indexAttaquant, indexCible, joueurElimine, nombreJoueurs);
+					if (finPartie) {
+						return true;
 					}
 				}
 			}
 		}
-		// Affichage de la carte d'attaque du dernier coup
-		for (i=0; i<nombre_de_joueurs; i++) {
-			joueurs[i].affiche_plateau_attaquant(joueurs[i]);
+		return false;
+	}
+
+	/**
+	 *	Exécute une attaque d'un joueur vers un autre.
+	 */
+	private boolean executerAttaque(int indexAttaquant, int indexCible, boolean[] joueurElimine, int nombreJoueurs) {
+		boolean impossible = effectuerTir(indexAttaquant, indexCible);
+		utilitaire.afficher_evenement_coup(joueurs[indexCible].derniere_case_tentee);
+		affichage.afficherCarteJoueur(grille, joueurs[indexCible]);
+
+		gererEliminations(indexAttaquant, indexCible, joueurElimine, impossible);
+		return verifierFinJeu(joueurElimine, nombreJoueurs, impossible);
+	}
+
+	/**
+	 *	Effectue le tir selon le type de joueur.
+	 */
+	private boolean effectuerTir(int indexAttaquant, int indexCible) {
+		if (joueurs[indexAttaquant].IA_humain) {
+			return !joueurs[indexAttaquant].tenter_une_case_IA(joueurs[indexCible]);
 		}
-			
-		// Affichage des cartes des joueurs à la fin du jeu
-		for (i=0; i<nombre_de_joueurs; i++) {
-			joueurs[i].carte_a_montrer = true;
-			affichage.afficher_carte_joueur(grille, joueurs[i]);
+		return !joueurs[indexAttaquant].tenter_une_case(joueurs[indexCible]);
+	}
+
+	// --------------------------------------------------------------------------
+	// Gestion des éliminations
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Gère les éliminations de joueurs.
+	 */
+	private void gererEliminations(int indexAttaquant, int indexCible, boolean[] joueurElimine, boolean impossible) {
+		if (impossible) {
+			joueurs[indexAttaquant].perd();
+			if (!joueurElimine[indexAttaquant]) {
+				joueurElimine[indexAttaquant] = true;
+			}
+		}
+		if (joueurs[indexCible].a_perdu() && !joueurElimine[indexCible]) {
+			joueurElimine[indexCible] = true;
 		}
 	}
 
-// ###################### Main ###################### //
+	/**
+	 *	Vérifie si le jeu est terminé.
+	 */
+	private boolean verifierFinJeu(boolean[] joueurElimine, int nombreJoueurs, boolean impossible) {
+		int nombreElimines = compterElimines(joueurElimine);
+		if (nombreElimines == nombreJoueurs - 1 || impossible) {
+			afficherMessageFin();
+			return true;
+		}
+		return false;
+	}
 
-	public static void main (String [] args) {
+	/**
+	 *	Compte les joueurs éliminés.
+	 */
+	private int compterElimines(boolean[] joueurElimine) {
+		int compte = 0;
+		for (int index = 0; index < joueurElimine.length; index++) {
+			if (joueurElimine[index]) {
+				compte++;
+			}
+		}
+		return compte;
+	}
+
+	/**
+	 *	Affiche le message de fin de partie.
+	 */
+	private void afficherMessageFin() {
+		aff("\nFin du jeu");
+		int gagnant = utilitaire.recherche_gagnant(this.joueurs) + 1;
+		if (gagnant > 0) {
+			aff("\nLe gagnant est le joueur " + gagnant + ".\n");
+		} else {
+			aff("\nIl n'y a aucun gagnant.\n");
+		}
+	}
+
+	// --------------------------------------------------------------------------
+	// Affichage des résultats
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Affiche les résultats finaux.
+	 */
+	private void afficherResultatsFinaux(int nombreJoueurs) {
+		for (int index = 0; index < nombreJoueurs; index++) {
+			joueurs[index].affiche_plateau_attaquant(joueurs[index]);
+		}
+		for (int index = 0; index < nombreJoueurs; index++) {
+			joueurs[index].carte_a_montrer = true;
+			affichage.afficherCarteJoueur(grille, joueurs[index]);
+		}
+	}
+
+	// ==========================================================================
+	// Main
+	// ==========================================================================
+
+	/**
+	 *	Point d'entrée du programme.
+	 */
+	public static void main(String[] args) {
 		Jeu jeu = new Jeu(4, 4, 2);
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
-	}	
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
+	}
 }

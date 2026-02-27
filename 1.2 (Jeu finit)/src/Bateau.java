@@ -1,143 +1,195 @@
+// ==============================================================================
+// Classe Bateau
+// ==============================================================================
+
+/**
+ *	Représente un bateau dans le jeu de bataille navale.
+ *	Gère les cases occupées, l'état touché/coulé.
+ */
 class Bateau {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
 	Menu menu;
 	int nombre_de_cases;
 	boolean touche;
 	boolean coule;
+	public Case[] cases;
 
-	public Case [] cases;
+	// ==========================================================================
+	// Constructeurs
+	// ==========================================================================
 
+	/**
+	 *	Constructeur par défaut.
+	 */
 	public Bateau() {
-		menu = new Menu();
+		this.menu = new Menu();
 	}
 
 	/**
-		Cases : 
-			Liste des cases du plateau 
-			sur lesquel est le bateau.
-	**/
-	public Bateau (Case [] cases) {
-		menu = new Menu();
-		this.nombre_de_cases = cases.length;
-		this.cases = cases;
-		touche = false;
-		coule = false;
+	 *	Constructeur avec cases.
+	 *
+	 *	@param casesBateau Liste des cases occupées par le bateau
+	 */
+	public Bateau(Case[] casesBateau) {
+		this.menu = new Menu();
+		this.nombre_de_cases = casesBateau.length;
+		this.cases = casesBateau;
+		this.touche = false;
+		this.coule = false;
 	}
 
-// ######## Fonctions utilitaires pour les bateaux ######### //
-
-// ###************** Placement des bateaux **************### //
+	// ==========================================================================
+	// Fonctions principales - Placement des bateaux
+	// ==========================================================================
 
 	/**
-		Renvoie le nombre de cases max.
-
-		Soit n le nombre de joueurs
-		et m le nombre de cases total
-		de la grille.
-
-		Calcul : res = (1/(n+1))*m
-	**/
-	public int nombre_de_place_de_bateau_max (Grille grille) {
+	 *	Calcule le nombre maximum de cases pour les bateaux.
+	 *	Formule : (3/5) * nombreCasesTotal
+	 *
+	 *	@param grille Grille de jeu
+	 *	@return Nombre maximum de cases autorisées
+	 */
+	public int nombre_de_place_de_bateau_max(Grille grille) {
 		int hauteur = grille.hauteur;
 		int largeur = grille.largeur;
-
-		int nombre_de_cases_total = hauteur*largeur;
-		int max_autorise = (int)((3.0/5.0)*nombre_de_cases_total);
-
-		return max_autorise;
+		int nombreCasesTotal = hauteur * largeur;
+		return (int) ((3.0 / 5.0) * nombreCasesTotal);
 	}
 
 	/**
-		Donne la taille max d'un bateau
-		en fonction de la hauteur et 
-		de la largeur de la grille uniquement.
-	**/
-	public int taille_max_bateau (Grille grille, int proposition) {
-		int hauteur = grille.hauteur;
-		int largeur = grille.largeur;
-		int max_hauteur_largeur = Math.min(hauteur, largeur);
-
-		if (proposition>max_hauteur_largeur) return max_hauteur_largeur;
-		else return proposition;
+	 *	Détermine la taille maximale d'un bateau selon la grille.
+	 *
+	 *	@param grille Grille de jeu
+	 *	@param proposition Taille proposée
+	 *	@return Taille maximale autorisée
+	 */
+	public int taille_max_bateau(Grille grille, int proposition) {
+		int maxHauteurLargeur = Math.min(grille.hauteur, grille.largeur);
+		return (proposition > maxHauteurLargeur) ? maxHauteurLargeur : proposition;
 	}
 
 	/**
-		Donne les bateaux d'un joueur
-		Chaque case du tableau int[] 
-		contient le nombre du case d'un bateau.
-	**/
-	public int [] donne_nombre_de_cases_bateaux (Grille grille) {
-		int nombre_de_place_de_bateau_max = nombre_de_place_de_bateau_max(grille);
-
-		int [] res = menu.entre_nombre_de_case_bateaux(grille, nombre_de_place_de_bateau_max);		
-
-		return res;
+	 *	Récupère les tailles des bateaux via le menu.
+	 *
+	 *	@param grille Grille de jeu
+	 *	@return Tableau des tailles de bateaux
+	 */
+	public int[] donne_nombre_de_cases_bateaux(Grille grille) {
+		int nombrePlaceMax = nombre_de_place_de_bateau_max(grille);
+		return menu.entre_nombre_de_case_bateaux(grille, nombrePlaceMax);
 	}
 
-// ################ Fonctions utilitaires du jeu ################ //
+	// ==========================================================================
+	// Fonctions principales - Combat
+	// ==========================================================================
 
-	public boolean attaque (Case case_a_attaquer) {
-		int i;
-		Case case_tmp = new Case();
-		boolean est_coule;
-		if (!case_a_attaquer.contient_case(this.cases, 
-						case_a_attaquer)) {
+	/**
+	 *	Attaque une case du bateau.
+	 *
+	 *	@param caseAttaquee Case à attaquer
+	 *	@return true si la case appartient au bateau
+	 */
+	public boolean attaque(Case caseAttaquee) {
+		Case caseTemp = new Case();
+		if (!caseAttaquee.contient_case(this.cases, caseAttaquee)) {
 			return false;
 		}
-		for (i=0; i<cases.length; i++) {
-			if (case_tmp.compare_case(cases[i], case_a_attaquer)) {
-				cases[i].attaquer();
-			}
-		}
-		this.coule = verifie_coule();		
-
+		attaquerCaseDuBateau(caseAttaquee);
+		this.coule = verifie_coule();
 		return true;
 	}
 
-	public boolean verifie_coule () {
-		int i;
+	/**
+	 *	Attaque la case correspondante dans le bateau.
+	 */
+	private void attaquerCaseDuBateau(Case caseAttaquee) {
+		Case caseTemp = new Case();
+		for (int index = 0; index < cases.length; index++) {
+			if (caseTemp.compare_case(cases[index], caseAttaquee)) {
+				cases[index].attaquer();
+			}
+		}
+	}
 
-		for (i=0; i<cases.length; i++) {
-			if (!cases[i].est_attaquee()) {
+	/**
+	 *	Vérifie si le bateau est coulé (toutes cases attaquées).
+	 *
+	 *	@return true si coulé, false sinon
+	 */
+	public boolean verifie_coule() {
+		for (int index = 0; index < cases.length; index++) {
+			if (!cases[index].est_attaquee()) {
 				return false;
 			}
 		}
-		for (i=0; i<cases.length; i++) {
-			cases[i].couler();
-		}
+		marquerToutesCasesCoulees();
 		return true;
 	}
 
-	public boolean est_coule () {
+	/**
+	 *	Marque toutes les cases du bateau comme coulées.
+	 */
+	private void marquerToutesCasesCoulees() {
+		for (int index = 0; index < cases.length; index++) {
+			cases[index].couler();
+		}
+	}
+
+	/**
+	 *	Retourne l'état coulé du bateau.
+	 *
+	 *	@return true si coulé
+	 */
+	public boolean est_coule() {
 		return coule;
 	}
 
-// ################### Fonctions utilitaires ###################### //
+	// ==========================================================================
+	// Fonctions utilitaires - Affichage debug
+	// ==========================================================================
 
-	public void aff_cases () {
-		int i;
-
-		for (i=0; i<cases.length; i++) {
-			aff("Case "+(i+1)+" : \n"+cases[i].aff_case_str());
+	/**
+	 *	Affiche les cases du bateau.
+	 */
+	public void aff_cases() {
+		for (int index = 0; index < cases.length; index++) {
+			aff("Case " + (index + 1) + " : \n" + cases[index].aff_case_str());
 		}
 	}
 
-	public void aff_cases_touchee () {
-		int i;
-
-		for (i=0; i<cases.length; i++) {
-			if (cases[i].est_attaquee())
-				aff("cases["+(i+1)+"] est attaquée");
-			else 
-				aff("cases["+(i+1)+"] n'est pas attaquée");
+	/**
+	 *	Affiche l'état attaqué de chaque case.
+	 */
+	public void aff_cases_touchee() {
+		for (int index = 0; index < cases.length; index++) {
+			String etat = cases[index].est_attaquee() ? "est attaquée" : "n'est pas attaquée";
+			aff("cases[" + (index + 1) + "] " + etat);
 		}
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
+
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 *
+	 *	@param message Message à afficher
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
-
 }

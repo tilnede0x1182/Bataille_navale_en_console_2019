@@ -1,210 +1,286 @@
+// ==============================================================================
+// Classe Case
+// ==============================================================================
+
+/**
+ *	Représente une case du plateau de jeu.
+ *	Contient les coordonnées, l'état et les références au joueur/bateau.
+ */
 class Case {
+
+	// ==========================================================================
+	// Données
+	// ==========================================================================
+
 	public int ordonnee;
 	public int abscisse;
 	public Joueur joueur;
 	public Bateau bateau;
 	public int numero_du_bateau;
-
 	public boolean attaquee;
 	public boolean coule;
-
-	/**
-		Pour le tableau d'attaque :
-		0 : tans l'eau
-		1 : touché
-		2 : coulé
-	**/
+	/** Etat pour tableau d'attaque : 0=eau, 1=touché, 2=coulé, -1=rien */
 	public int etat;
 
-	public Case() {}
+	// ==========================================================================
+	// Constructeurs
+	// ==========================================================================
 
-	public Case (int ordonnee, int abscisse) {
-		constructeur(ordonnee, abscisse);
+	/**
+	 *	Constructeur par défaut.
+	 */
+	public Case() {
+	}
+
+	/**
+	 *	Constructeur avec coordonnées.
+	 *
+	 *	@param ordonneeCase Coordonnée Y
+	 *	@param abscisseCase Coordonnée X
+	 */
+	public Case(int ordonneeCase, int abscisseCase) {
+		constructeur(ordonneeCase, abscisseCase);
 		this.etat = -1;
 	}
 
-	public Case (Joueur joueur, Bateau bateau, int numero_du_bateau, 
-						int ordonnee, int abscisse) {
-		this.joueur = joueur;
-		this.bateau = bateau;
-		this.numero_du_bateau = numero_du_bateau;
-		constructeur(ordonnee, abscisse);
+	/**
+	 *	Constructeur complet avec joueur et bateau.
+	 */
+	public Case(Joueur joueurProprio, Bateau bateauCase, int numeroBateau, int ordonneeCase, int abscisseCase) {
+		this.joueur = joueurProprio;
+		this.bateau = bateauCase;
+		this.numero_du_bateau = numeroBateau;
+		constructeur(ordonneeCase, abscisseCase);
 		this.etat = -1;
 	}
 
-	public Case (int ordonnee, int abscisse, int etat) {
-		constructeur(ordonnee, abscisse);
-		this.etat = etat;
+	/**
+	 *	Constructeur avec coordonnées et état.
+	 */
+	public Case(int ordonneeCase, int abscisseCase, int etatCase) {
+		constructeur(ordonneeCase, abscisseCase);
+		this.etat = etatCase;
 	}
 
-	public void constructeur (int ordonnee, int abscisse) {
-		this.ordonnee = ordonnee;
-		this.abscisse = abscisse;
+	/**
+	 *	Initialise les attributs communs.
+	 */
+	public void constructeur(int ordonneeCase, int abscisseCase) {
+		this.ordonnee = ordonneeCase;
+		this.abscisse = abscisseCase;
 		this.attaquee = false;
 		this.coule = false;
 	}
 
-// ################ Fonctions utilitaires du jeu ################ //
+	// ==========================================================================
+	// Fonctions principales - Etat de la case
+	// ==========================================================================
 
+	/**
+	 *	Vérifie si la case a été attaquée.
+	 *
+	 *	@return true si attaquée
+	 */
 	public boolean est_attaquee() {
 		return attaquee;
 	}
 
+	/**
+	 *	Vérifie si la case est coulée.
+	 *
+	 *	@return true si coulée
+	 */
 	public boolean est_coulee() {
 		return coule;
 	}
 
-	public void attaquer () {
+	/**
+	 *	Marque la case comme attaquée.
+	 */
+	public void attaquer() {
 		attaquee = true;
 	}
 
-	public void couler () {
+	/**
+	 *	Marque la case comme coulée.
+	 */
+	public void couler() {
 		coule = true;
 	}
 
+	// ==========================================================================
+	// Fonctions principales - Validation de format
+	// ==========================================================================
+
 	/**
-		Format correct : A5.
-	**/
-	public boolean verifie_format_case (String s0, int hauteur) {
-		char tmp, tmp2;
-		if (s0==null) return false;
-		if (s0.length()==2) {
-			tmp = s0.charAt(0);
-			if (tmp>='A' && tmp<=('A'+(hauteur-1))) {
-				tmp2 = s0.charAt(1);
-				if (is_integer(""+tmp2)) return true;
-				else return false;
-			} else return false;
-		} else return false;
+	 *	Vérifie le format d'une case (ex: A5).
+	 *
+	 *	@param chaine Chaîne à vérifier
+	 *	@param hauteur Hauteur de la grille
+	 *	@return true si format valide
+	 */
+	public boolean verifie_format_case(String chaine, int hauteur) {
+		if (chaine == null || chaine.length() != 2) {
+			return false;
+		}
+		char lettre = chaine.charAt(0);
+		char chiffre = chaine.charAt(1);
+		boolean lettreValide = (lettre >= 'A' && lettre <= ('A' + (hauteur - 1)));
+		boolean chiffreValide = is_integer("" + chiffre);
+		return lettreValide && chiffreValide;
 	}
 
 	/**
-		On donne des coordonnées type A5
-		et la fonction donne 1, 5 pour A5
-	**/
-	public int [] convertit_case_en_coordonnee (Grille grille, String s0) {
-		int [] res = new int[2];
-		char c='A';
-		int ordonnee;
-		int abscisse;
-
-		if (verifie_case_existe(grille, s0)) {
-			ordonnee = (int)(s0.charAt(0)-(int)('A')+1);
-			abscisse = (int)(s0.charAt(1)-(int)('0'));
-			res[0] = ordonnee;
-			res[1] = abscisse;
+	 *	Vérifie qu'une case existe dans la grille.
+	 *
+	 *	@param grille Grille de jeu
+	 *	@param caseStr Case au format texte
+	 *	@return true si la case existe
+	 */
+	public boolean verifie_case_existe(Grille grille, String caseStr) {
+		if (caseStr == null || caseStr.isEmpty() || caseStr.length() != 2) {
+			return false;
 		}
-		else {
+		if (!verifie_format_case(caseStr, grille.hauteur)) {
+			return false;
+		}
+		int abscisseCase = (int) (caseStr.charAt(1) - '1' + 1);
+		return (abscisseCase >= 1 && abscisseCase <= grille.largeur);
+	}
+
+	// --------------------------------------------------------------------------
+	// Conversion de coordonnées
+	// --------------------------------------------------------------------------
+
+	/**
+	 *	Convertit une case au format "A5" en coordonnées.
+	 *
+	 *	@param grille Grille de jeu
+	 *	@param chaine Case au format texte
+	 *	@return Tableau [ordonnée, abscisse] ou null si invalide
+	 */
+	public int[] convertit_case_en_coordonnee(Grille grille, String chaine) {
+		if (!verifie_case_existe(grille, chaine)) {
 			aff("convertit_case_en_coordonnee : Format incorrect");
 			return null;
 		}
-
-		return res;
+		int[] resultat = new int[2];
+		resultat[0] = (int) (chaine.charAt(0) - 'A' + 1);
+		resultat[1] = (int) (chaine.charAt(1) - '0');
+		return resultat;
 	}
 
+	// ==========================================================================
+	// Fonctions principales - Comparaison et recherche
+	// ==========================================================================
 
-	public boolean verifie_case_existe (Grille grille, String case_tmp) {
-		if (case_tmp==null) return false;
-		if (case_tmp.isEmpty()) return false;
-		if (case_tmp.length()!=2) return false;
-		if (!verifie_format_case(case_tmp, grille.hauteur)) return false;
-		int abscisse = (int)(case_tmp.charAt(1)-'1'+1);
-		if (abscisse<1 || abscisse>grille.largeur) return false;
-		return true;
+	/**
+	 *	Compare deux cases par leurs coordonnées.
+	 *
+	 *	@param case1 Première case
+	 *	@param case2 Deuxième case
+	 *	@return true si mêmes coordonnées
+	 */
+	public boolean compare_case(Case case1, Case case2) {
+		return (case1.ordonnee == case2.ordonnee && case1.abscisse == case2.abscisse);
 	}
 
 	/**
-		Prend la première case et la dernière case
-		et retourne un tableau de cases contenant
-		toutes les cases du bateau.
-	**/
-	public void convertit_case (Case case_1, Case case_fin) {
-		
-	}
-
-	/**
-		Renvoie true si l'une des cases de tab2 est dans tab1.
-
-	**/
-	public boolean contient_case (Case [] tab1, Case[] tab2) {
-		int i, j;
-		Case case_tmp = new Case();
-
-		for (i=0; i<tab1.length; i++) {
-			for (j=0; j<tab2.length; j++) {
-				if (case_tmp.compare_case(tab1[i], tab2[j])) return true;
+	 *	Vérifie si une case est présente dans un tableau.
+	 *
+	 *	@param tableauCases Tableau de cases
+	 *	@param caseRecherchee Case à rechercher
+	 *	@return true si trouvée
+	 */
+	public boolean contient_case(Case[] tableauCases, Case caseRecherchee) {
+		for (int index = 0; index < tableauCases.length; index++) {
+			if (compare_case(tableauCases[index], caseRecherchee)) {
+				return true;
 			}
 		}
 		return false;
 	}
 
-// ################### Fonctions utilitaires #################### //
-
-	public boolean compare_case (Case case_1, Case case_2) {
-		return (case_1.ordonnee==case_2.ordonnee &&
-			case_1.abscisse==case_2.abscisse);
-	}
-
-	public boolean contient_case (Case [] cases, Case case_a_comparer) {
-		int i;
-
-		for (i=0; i<cases.length; i++) {
-			if (compare_case(cases[i], 
-				case_a_comparer)) return true;
+	/**
+	 *	Vérifie si une case de tab2 est dans tab1.
+	 *
+	 *	@param tab1 Premier tableau
+	 *	@param tab2 Deuxième tableau
+	 *	@return true si intersection non vide
+	 */
+	public boolean contient_case(Case[] tab1, Case[] tab2) {
+		for (int index1 = 0; index1 < tab1.length; index1++) {
+			for (int index2 = 0; index2 < tab2.length; index2++) {
+				if (compare_case(tab1[index1], tab2[index2])) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
 
-	public boolean is_integer (String s0) {
+	// ==========================================================================
+	// Fonctions utilitaires - Conversion et affichage
+	// ==========================================================================
+
+	/**
+	 *	Vérifie si une chaîne représente un entier.
+	 */
+	public boolean is_integer(String chaine) {
 		try {
-			int n1 = Integer.parseInt(s0);
+			Integer.parseInt(chaine);
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception erreur) {
 			return false;
 		}
 	}
 
-	public String aff_case_str () {
-		String res="";
-		res+="Ordonnee = "+ordonnee+"\n";
-		res+="Abscisse = "+abscisse+"\n";
-		return res;
+	/**
+	 *	Retourne les coordonnées sous forme de chaîne.
+	 */
+	public String aff_case_str() {
+		return "Ordonnee = " + ordonnee + "\nAbscisse = " + abscisse + "\n";
 	}
 
 	/**
-		Donne les coordonnées de la case en format type : A5
-	**/
+	 *	Retourne la case au format écrit (ex: A5).
+	 */
 	public String case_format_ecrit() {
 		return (new Utilitaire()).convertit_coordonnees_str(ordonnee, abscisse);
 	}
 
+	/**
+	 *	Représentation textuelle de la case.
+	 */
 	public String toString() {
-		String res = "";
-		if (joueur!=null) {
-			res = "J"+joueur.toString()+"B"+this.numero_du_bateau;
-			if (attaquee && !coule) {
-				res = "T"+res;
-			}
-			if (attaquee && coule) {
-				res = "C"+res;
-			}
+		if (joueur == null) {
+			return attaquee ? "X  " : "0  ";
 		}
-		else {
-			if (attaquee) {
-				res = "X  ";
-			}
-			else res = "0  ";
+		String resultat = "J" + joueur.toString() + "B" + this.numero_du_bateau;
+		if (attaquee && !coule) {
+			resultat = "T" + resultat;
 		}
-		return res;
+		if (attaquee && coule) {
+			resultat = "C" + resultat;
+		}
+		return resultat;
 	}
 
-	public void aff (String oo) {
-		System.out.println(oo);
+	// ==========================================================================
+	// Fonctions utilitaires
+	// ==========================================================================
+
+	/**
+	 *	Affiche un message avec saut de ligne.
+	 */
+	public void aff(String message) {
+		System.out.println(message);
 	}
 
-	public void affnn (String oo) {
-		System.out.print(oo);
+	/**
+	 *	Affiche un message sans saut de ligne.
+	 */
+	public void affnn(String message) {
+		System.out.print(message);
 	}
-
 }
