@@ -13,7 +13,7 @@ class Affichage {
 		int hauteur = plateau.length;
 		int largeur = plateau[0].length;
 
-		aff("\nLégende : \n\n  0 : case pas encore attaquée\n  X : Dans l'eau\n  1 : Touché\n  2 : Coulé");
+		aff("\nLÃ©gende : \n\n  0 : case pas encore attaquÃ©e\n  X : Dans l'eau\n  1 : TouchÃ©\n  2 : CoulÃ©");
 		aff("\nTableau d'attaque du joueur "+numero_du_joueur+" : \n");
 
 		affiche_espaces(nombre_d_espaces+1);

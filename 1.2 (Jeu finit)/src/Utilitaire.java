@@ -14,12 +14,12 @@ class Utilitaire {
 	}
 
 	/**
-		Un bateau peut être soit horizontal ou vertical soit oblique.
+		Un bateau peut Ãªtre soit horizontal ou vertical soit oblique.
 		Cas :
 
-		case_fin est égale à case_1
-		case_fin à gauche de case_1
-		case_fin à droite de case_1
+		case_fin est Ã©gale Ã  case_1
+		case_fin Ã  gauche de case_1
+		case_fin Ã  droite de case_1
 		case_fin en haut de case_1
 		case_fin en bas de case_1		
 	**/
@@ -32,13 +32,13 @@ class Utilitaire {
 		}
 		//Horizontal
 		if (case_1[0]==case_fin[0]) {
-			//case_fin à gauche de case_1
+			//case_fin Ã  gauche de case_1
 			if (case_fin[1]<case_1[1]) {
 				tmp = case_1[1]-case_fin[1];
 				if (tmp==nombre_de_cases && tmp>0) return true;
 				else return false;
 			}
-			//case_fin à droite de case_1
+			//case_fin Ã  droite de case_1
 			if (case_fin[1]>case_1[1]) {
 				tmp = case_fin[1]-case_1[1];
 				if (tmp==nombre_de_cases && tmp>0) return true;
@@ -83,13 +83,13 @@ class Utilitaire {
 		}
 		//Horizontal
 		if (case_1[0]==case_fin[0]) {
-			//case_fin à gauche de case_1
+			//case_fin Ã  gauche de case_1
 			if (case_fin[1]<case_1[1]) {
 				for (i=0; i<nombre_de_cases; i++) {
 					res[i] = new Case(case_1[0], case_1[1]-i);
 				}
 			}
-			//case_fin à droite de case_1
+			//case_fin Ã  droite de case_1
 			if (case_fin[1]>case_1[1]) {
 				for (i=0; i<nombre_de_cases; i++) {
 					res[i] = new Case(case_1[0], case_1[1]+i);
@@ -116,8 +116,8 @@ class Utilitaire {
 
 	/**
 		Remplit un tableau de Case[] des cases 
-		occupées pour rendre accessible un Bateau, 
-		une Case et un Joueur à partir d'un même objet.
+		occupÃ©es pour rendre accessible un Bateau, 
+		une Case et un Joueur Ã  partir d'un mÃªme objet.
 		
 	**/
 	public Case [] cases_occuppees (Joueur joueur) {
@@ -159,7 +159,7 @@ class Utilitaire {
 	}
 
 	/**
-		Si trouve la case recherchée, la retourne,
+		Si trouve la case recherchÃ©e, la retourne,
 		sinon retourne null.
 	**/
 	public Case cherche_case (Case [] cases, Case case_1) {
@@ -209,7 +209,7 @@ class Utilitaire {
 	}
 
 	/**
-		Retourne false si la case tentée a déjà été tentée,
+		Retourne false si la case tentÃ©e a dÃ©jÃ  Ã©tÃ© tentÃ©e,
 		true sinon.
 	**/
 	public boolean verifie_case_tentee (Case [] cases_tentees, int cases_tentees_indice, Case case_tentee) {
@@ -229,15 +229,15 @@ class Utilitaire {
 	/**
 		-1 : rien
 		 0 : dans l'eau
-		 1 : touché
-		 2 : coulé
+		 1 : touchÃ©
+		 2 : coulÃ©
 	**/
 	public void afficher_evenement_coup (int tmp) {
 		String res = "";
 
 		if (tmp==0) res = "Dans l'eau !";
-		if (tmp==1) res = "Touché !";
-		if (tmp==2) res = "Coulé !";
+		if (tmp==1) res = "TouchÃ© !";
+		if (tmp==2) res = "CoulÃ© !";
 
 		aff("\n\t\t"+res+"\n");
 	}

@@ -11,8 +11,8 @@ class Case {
 	/**
 		Pour le tableau d'attaque :
 		0 : tans l'eau
-		1 : touché
-		2 : coulé
+		1 : touchÃ©
+		2 : coulÃ©
 	**/
 	public int etat;
 
@@ -79,7 +79,7 @@ class Case {
 	}
 
 	/**
-		On donne des coordonnées type A5
+		On donne des coordonnÃ©es type A5
 		et la fonction donne 1, 5 pour A5
 	**/
 	public int [] convertit_case_en_coordonnee (Grille grille, String s0) {
@@ -114,7 +114,7 @@ class Case {
 	}
 
 	/**
-		Prend la première case et la dernière case
+		Prend la premiÃ¨re case et la derniÃ¨re case
 		et retourne un tableau de cases contenant
 		toutes les cases du bateau.
 	**/
@@ -173,7 +173,7 @@ class Case {
 	}
 
 	/**
-		Donne les coordonnées de la case en format type : A5
+		Donne les coordonnÃ©es de la case en format type : A5
 	**/
 	public String case_format_ecrit() {
 		return (new Utilitaire()).convertit_coordonnees_str(ordonnee, abscisse);

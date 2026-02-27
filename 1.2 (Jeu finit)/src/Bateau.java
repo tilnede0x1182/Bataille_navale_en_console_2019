@@ -126,9 +126,9 @@ class Bateau {
 
 		for (i=0; i<cases.length; i++) {
 			if (cases[i].est_attaquee())
-				aff("cases["+(i+1)+"] est attaquée");
+				aff("cases["+(i+1)+"] est attaquÃ©e");
 			else 
-				aff("cases["+(i+1)+"] n'est pas attaquée");
+				aff("cases["+(i+1)+"] n'est pas attaquÃ©e");
 		}
 	}
 
